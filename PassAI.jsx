@@ -116,7 +116,7 @@ function LandingPage({onAuth}){
   const [form,setForm]=useState({name:"",email:"",password:"",country:"Nigeria",level:"Secondary School",exam:"JAMB"});
   const [loading,setLoading]=useState(false);
   const c=COUNTRIES[form.country];
-  const currentExams=c?.exams[form.level]||[];
+  const currentExams=c?.exams||[];
 
   const pick=(country)=>{
     const firstLevel="Secondary School";
@@ -180,8 +180,7 @@ function LandingPage({onAuth}){
             {mode==="signup"&&<div style={{marginBottom:12}}>
               <label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Study Level</label>
               <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                {LEVELS.map(l=><button key={l} onClick={()=>setForm(p=>({...p,level:l,exam:COUNTRIES[p.country].exams[l][0]}))} style={{padding:"6px 12px",borderRadius:20,border:`1.5px solid ${form.level===l?G.purple600:G.gray100}`,background:form.level===l?G.purple50:G.white,color:form.level===l?G.purple600:G.gray500,fontSize:12,cursor:"pointer",fontWeight:600}}>{l}</button>)}
-              </div>
+                
             </div>}
             {mode==="signup"&&<div style={{marginBottom:16}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Target Exam</label><select value={form.exam} onChange={e=>setForm(p=>({...p,exam:e.target.value}))} style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none",background:G.white}}>{currentExams.map(e=><option key={e}>{e}</option>)}</select></div>}
             {mode==="login"&&<div style={{marginBottom:14}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Country</label><select value={form.country} onChange={e=>setForm(p=>({...p,country:e.target.value,exam:COUNTRIES[e.target.value].exams["Secondary School"][0]}))} style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none",background:G.white}}>{Object.keys(COUNTRIES).map(c=><option key={c}>{c}</option>)}</select></div>}
@@ -345,7 +344,7 @@ function Sidebar({active,onNav,user,onLogout}){
         <div style={{width:32,height:32,borderRadius:9,background:G.amber500,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>🎯</div>
         <span className="outfit" style={{color:G.white,fontWeight:800,fontSize:20}}>PassAI</span>
       </div>
-      <div style={{fontSize:12,color:`${G.white}60`}}>{c.flag} {user.country} · {user.level||"Secondary"} · {user.exam}</div>
+      <div style={{fontSize:12,color:`${G.white}60`}}>{c.flag} {user.country} · {"Secondary School"||"Secondary"} · {user.exam}</div>
     </div>
     <nav style={{flex:1,padding:"0.75rem 0.5rem"}}>
       {NAV.map(n=><button key={n.id} onClick={()=>onNav(n.id)} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:10,border:"none",background:active===n.id?G.purple700:"transparent",color:active===n.id?G.white:`${G.white}60`,cursor:"pointer",marginBottom:2,transition:"all 0.15s",fontSize:14,fontWeight:active===n.id?600:400,textAlign:"left"}}>
