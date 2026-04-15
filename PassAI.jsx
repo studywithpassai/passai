@@ -145,7 +145,33 @@ function LandingPage({onAuth}){
     setForm(p=>({...p,country,level:firstLevel,exam:firstExam}));
     setStep(2);
   };
-  const submit=async()=>{if(!form.email||!form.password)return;setLoading(true);await new Promise(r=>setTimeout(r,800));setLoading(false);onAuth({name:form.name||"Student",email:form.email,country:form.country,exam:form.exam,plan:"free"})};
+  const [authError,setAuthError]=useState("");
+  const submit=async()=>{
+    if(!form.email||!form.password){setAuthError("Please enter email and password");return;}
+    setLoading(true);setAuthError("");
+    try{
+      const endpoint=mode==="signup"?"/auth/signup":"/auth/login";
+      const body=mode==="signup"
+        ?{email:form.email,password:form.password,name:form.name,country:form.country,exam:form.exam}
+        :{email:form.email,password:form.password};
+      const res=await fetch("https://passai-production-7757.up.railway.app"+endpoint,{
+        method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)
+      });
+      const d=await res.json();
+      if(!res.ok){setAuthError(d.error||"Something went wrong");setLoading(false);return;}
+      const token=d.session?.access_token;
+      const profile=d.profile||d.user||{};
+      onAuth({
+        name:profile.full_name||form.name||"Student",
+        email:form.email,
+        country:profile.country||form.country||"Nigeria",
+        exam:profile.exam||form.exam||"JAMB",
+        plan:profile.plan||"free",
+        token
+      });
+    }catch(e){setAuthError("Network error. Check your connection.");}
+    setLoading(false);
+  };
 
   return <div style={{minHeight:"100vh",background:G.cream}}>
     <div style={{background:`linear-gradient(140deg,${G.purple900},${G.purple800} 60%,#0a3d2e)`,padding:"0 1.5rem",position:"relative",overflow:"hidden"}}>
@@ -200,6 +226,7 @@ function LandingPage({onAuth}){
             </div>}
             {mode==="signup"&&<div style={{marginBottom:16}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Target Exam</label><select value={form.exam} onChange={e=>setForm(p=>({...p,exam:e.target.value}))} style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none",background:G.white}}>{currentExams.map(e=><option key={e}>{e}</option>)}</select></div>}
             {mode==="login"&&<div style={{marginBottom:14}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Country</label><select value={form.country} onChange={e=>setForm(p=>({...p,country:e.target.value,exam:COUNTRIES[e.target.value].exams["Secondary School"][0]}))} style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none",background:G.white}}>{Object.keys(COUNTRIES).map(c=><option key={c}>{c}</option>)}</select></div>}
+            {authError&&<div style={{background:"#fdedec",border:"1px solid #f5c6cb",borderRadius:8,padding:"9px 12px",fontSize:13,color:"#c0392b",marginBottom:10}}>{authError}</div>}
             <Btn full loading={loading} onClick={submit} style={{marginBottom:10}}>{mode==="signup"?"Create Free Account →":"Log In →"}</Btn>
             <p style={{fontSize:12,color:G.gray400,textAlign:"center"}}>{mode==="signup"?"Have an account? ":"New here? "}<span onClick={()=>{setMode(mode==="signup"?"login":"signup");setStep(mode==="signup"?2:1)}} style={{color:G.purple600,cursor:"pointer",fontWeight:600}}>{mode==="signup"?"Log In":"Sign Up Free"}</span></p>
           </>}
@@ -499,19 +526,27 @@ function PastQuestions({user}){
   const LIMIT=20;
   const c=COUNTRIES[filterCountry]||COUNTRIES.Nigeria;
 
+  const SUPABASE_URL="https://apqmlgnfvthgtbymvyyn.supabase.co";
+  const SUPABASE_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwcW1sZ25mdnRoZ3RieW12eXluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMjQ0MDUsImV4cCI6MjA5MTgwMDQwNX0.KBqPnC5JX8aaZc3uFpp7lxA7p4fM_awa61yA06kmvLg";
+
   const fetchQuestions=async(country,exam,subject,off=0)=>{
     setLoading(true);
     try{
-      const params=new URLSearchParams({country,limit:LIMIT,offset:off});
-      if(exam&&exam!=="All")params.append("exam",exam);
-      if(subject&&subject!=="All")params.append("subject",subject);
-      const res=await fetch(`${API}/questions?${params}`,{headers:{Authorization:`Bearer ${user.token}`}});
+      let url=`${SUPABASE_URL}/rest/v1/past_questions?select=*&country=eq.${encodeURIComponent(country)}&order=year.desc&limit=${LIMIT}&offset=${off}`;
+      if(exam&&exam!=="All")url+=`&exam=eq.${encodeURIComponent(exam)}`;
+      if(subject&&subject!=="All")url+=`&subject=eq.${encodeURIComponent(subject)}`;
+      const res=await fetch(url,{headers:{
+        "apikey":SUPABASE_ANON,
+        "Authorization":`Bearer ${SUPABASE_ANON}`,
+        "Prefer":"count=exact"
+      }});
+      const totalCount=res.headers.get("content-range")?.split("/")?.[1];
       const d=await res.json();
-      if(off===0)setQuestions(d.questions||[]);
-      else setQuestions(p=>[...p,...(d.questions||[])]);
-      setTotal(d.total||0);
+      if(off===0)setQuestions(Array.isArray(d)?d:[]);
+      else setQuestions(p=>[...p,...(Array.isArray(d)?d:[])]);
+      setTotal(parseInt(totalCount)||0);
       setOffset(off);
-    }catch(e){console.error(e)}
+    }catch(e){console.error("Questions fetch error:",e)}
     setLoading(false);
   };
 
