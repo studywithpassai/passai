@@ -122,6 +122,24 @@ app.get("/auth/me", requireAuth, async (req, res) => {
 // AI TUTOR ROUTES
 // ═════════════════════════════════════════════════════════════════════════════
 
+// ─── PUBLIC AI ENDPOINT (no auth required) ────────────────────────────────────
+app.post("/ai/ask", aiLimiter, async (req, res) => {
+  const { messages, system } = req.body;
+  if (!messages?.length) return res.status(400).json({ error: "Messages required" });
+  try {
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1500,
+      system: system || "You are PassAI — an expert African exam study tutor.",
+      messages: messages.slice(-16),
+    });
+    res.json({ content: response.content });
+  } catch (err) {
+    console.error("AI ask error:", err.message);
+    res.status(500).json({ error: "AI error: " + err.message });
+  }
+});
+
 app.post("/ai/chat", requireAuth, checkQuota, aiLimiter, async (req, res) => {
   const { messages } = req.body;
   if (!messages?.length) return res.status(400).json({ error: "Messages required" });
@@ -304,7 +322,7 @@ Return ONLY valid JSON:
 // PAST QUESTIONS ROUTES
 // ═════════════════════════════════════════════════════════════════════════════
 
-app.get("/questions", requireAuth, async (req, res) => {
+app.get("/questions", async (req, res) => {
   const { exam, subject, year, country, limit = 20, offset = 0 } = req.query;
 
   let query = supabase.from("past_questions").select("*", { count: "exact" });

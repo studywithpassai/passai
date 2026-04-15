@@ -464,10 +464,9 @@ Rules:
     setInput("");setLoading(true);
     try{
       const history=[...messages,userMsg].filter(m=>!m.suggestions).map(m=>({role:m.role,content:m.content}));
-      const res=await fetch("https://api.anthropic.com/v1/messages",{
+      const res=await fetch("https://passai-production-7757.up.railway.app/ai/ask",{
         method:"POST",headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
-          model:"claude-sonnet-4-20250514",max_tokens:1500,
           system:buildSystem(isLesson,topic||lessonTopic,step),
           messages:history.slice(-16)
         })
@@ -682,8 +681,8 @@ function PastQuestions({user}){
   const getExplain=async(q)=>{
     setLoadingEx(p=>({...p,[q.id]:true}));
     try{
-      const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:500,messages:[{role:"user",content:`${q.exam} ${q.year} ${q.subject} (${q.country}):\nQ: ${q.question}\nAnswer: ${q.options[q.answer]}\n\nExplain clearly for a ${q.country} student. Cover why the correct answer is right and why wrong options are wrong. Reference ${COUNTRIES[q.country]?.curriculum}. Be concise.`}]})
+      const res=await fetch("https://passai-production-7757.up.railway.app/ai/ask",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({messages:[{role:"user",content:`${q.exam} ${q.year} ${q.subject} (${q.country}):\nQ: ${q.question}\nAnswer: ${q.options[q.answer]}\n\nExplain clearly for a ${q.country} student. Cover why the correct answer is right and why wrong options are wrong. Reference ${COUNTRIES[q.country]?.curriculum}. Be concise.`}]})
       });
       const d=await res.json();
       setAiExplain(p=>({...p,[q.id]:d.content?.[0]?.text||"Explanation unavailable."}));
@@ -761,8 +760,8 @@ function PracticeTest({user}){
   const generate=async()=>{
     setLoading(true);
     try{
-      const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2500,messages:[{role:"user",content:`Generate exactly ${cfg.count} ${cfg.difficulty} ${cfg.exam} questions on "${cfg.subject}" for ${user.country}.\nAlign with ${c.curriculum}.\nReturn ONLY valid JSON array:\n[{"question":"...","options":["A","B","C","D"],"answer":0,"explanation":"..."}]`}]})
+      const res=await fetch("https://passai-production-7757.up.railway.app/ai/ask",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({messages:[{role:"user",content:`Generate exactly ${cfg.count} ${cfg.difficulty} ${cfg.exam} questions on "${cfg.subject}" for ${user.country}.\nAlign with ${c.curriculum}.\nReturn ONLY valid JSON array:\n[{"question":"...","options":["A","B","C","D"],"answer":0,"explanation":"..."}]`}]})
       });
       const d=await res.json();
       let text=d.content?.[0]?.text||"[]";
@@ -855,8 +854,8 @@ function StudySchedule({user}){
     setLoading(true);
     const days=Math.ceil((new Date(form.date)-new Date())/864e5);
     try{
-      const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1800,messages:[{role:"user",content:`Study schedule for a ${user.country} student. Exam: ${form.exam} in ${days} days (${form.date}). Curriculum: ${c.curriculum}. Hours/day: ${form.hours}. Weak subjects: ${form.weak.join(",")||"none"}.\n\nReturn ONLY valid JSON:\n{"overview":"...","phases":[{"name":"","duration":"","focus":"","daily":[{"time":"08:00","task":"Subject — Topic","duration":"1hr"}]}],"tips":["tip1","tip2"]}`}]})
+      const res=await fetch("https://passai-production-7757.up.railway.app/ai/ask",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({messages:[{role:"user",content:`Study schedule for a ${user.country} student. Exam: ${form.exam} in ${days} days (${form.date}). Curriculum: ${c.curriculum}. Hours/day: ${form.hours}. Weak subjects: ${form.weak.join(",")||"none"}.\n\nReturn ONLY valid JSON:\n{"overview":"...","phases":[{"name":"","duration":"","focus":"","daily":[{"time":"08:00","task":"Subject — Topic","duration":"1hr"}]}],"tips":["tip1","tip2"]}`}]})
       });
       const d=await res.json();
       let text=d.content?.[0]?.text||"{}";
