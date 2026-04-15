@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 
 const G = {
-  green900:"#051f0e", green800:"#0a3d1f", green700:"#0d5c2e", green600:"#10783b",
-  green500:"#13944a", green400:"#2db862", green100:"#d0f2e0", green50:"#edfaf3",
+  purple900:"#1a0533", purple800:"#2d0a5e", purple700:"#3d0d7a", purple600:"#5a0fa8",
+  purple500:"#7b2fd4", purple400:"#9b4de8", purple100:"#e8d5f5", purple50:"#f5eafd",
   amber500:"#f5a623", amber400:"#f7bc55", amber100:"#fef3d8", amber50:"#fffbf0",
   cream:"#faf8f4", gray50:"#f5f4f0", gray100:"#ece9e3",
   gray300:"#b8b4ab", gray400:"#9a9690", gray500:"#7a766f", gray700:"#3d3b37", gray900:"#1a1917",
@@ -15,7 +15,7 @@ const css = `
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Plus Jakarta Sans',sans-serif;background:${G.cream};color:${G.gray900};-webkit-font-smoothing:antialiased}
   .outfit{font-family:'Outfit',sans-serif}
-  ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:${G.green400};border-radius:3px}
+  ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:${G.purple400};border-radius:3px}
   input,textarea,select,button{font-family:'Plus Jakarta Sans',sans-serif}
   .fade-in{animation:fadeIn 0.35s ease}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -49,23 +49,23 @@ const SAMPLE_QS=[
 
 const MOCK = {streak:7,questionsToday:6,totalQuestions:248,accuracy:72,subjects:{Mathematics:68,Physics:81,Chemistry:75,Biology:65,"English":79}};
 
-function Spinner({size=16,color=G.green500}){return <span className="spin" style={{width:size,height:size,borderRadius:"50%",border:`2px solid ${color}30`,borderTop:`2px solid ${color}`,display:"inline-block",flexShrink:0}}/>}
-function Tag({children,color=G.green600,bg=G.green50,style={}}){return <span style={{background:bg,color,fontSize:11,fontWeight:700,padding:"3px 9px",borderRadius:20,whiteSpace:"nowrap",...style}}>{children}</span>}
+function Spinner({size=16,color=G.purple500}){return <span className="spin" style={{width:size,height:size,borderRadius:"50%",border:`2px solid ${color}30`,borderTop:`2px solid ${color}`,display:"inline-block",flexShrink:0}}/>}
+function Tag({children,color=G.purple600,bg=G.purple50,style={}}){return <span style={{background:bg,color,fontSize:11,fontWeight:700,padding:"3px 9px",borderRadius:20,whiteSpace:"nowrap",...style}}>{children}</span>}
 function Btn({children,onClick,variant="primary",size="md",loading,disabled,full,style={}}){
   const sz={sm:"7px 15px 7px",md:"11px 22px",lg:"14px 28px"};
   const fs={sm:13,md:14,lg:16};
-  const v={primary:{background:G.green600,color:G.white,border:"none"},outline:{background:"transparent",color:G.green700,border:`1.5px solid ${G.green400}`},ghost:{background:"transparent",color:G.gray400,border:"none"},amber:{background:G.amber500,color:G.white,border:"none"},dark:{background:G.green900,color:G.white,border:"none"}};
+  const v={primary:{background:G.purple600,color:G.white,border:"none"},outline:{background:"transparent",color:G.purple700,border:`1.5px solid ${G.purple400}`},ghost:{background:"transparent",color:G.gray400,border:"none"},amber:{background:G.amber500,color:G.white,border:"none"},dark:{background:G.purple900,color:G.white,border:"none"}};
   return <button onClick={onClick} disabled={disabled||loading} style={{padding:sz[size],fontSize:fs[size],...v[variant],borderRadius:10,fontWeight:600,cursor:disabled||loading?"not-allowed":"pointer",transition:"all 0.15s",display:"inline-flex",alignItems:"center",justifyContent:"center",gap:7,opacity:disabled||loading?0.65:1,width:full?"100%":"auto",...style}}>
-    {loading&&<Spinner size={14} color={variant==="outline"?G.green600:G.white}/>}{children}
+    {loading&&<Spinner size={14} color={variant==="outline"?G.purple600:G.white}/>}{children}
   </button>
 }
 function Card({children,style={},onClick}){return <div onClick={onClick} style={{background:G.white,borderRadius:16,border:`1px solid ${G.gray100}`,padding:"1.25rem",cursor:onClick?"pointer":"default",...style}}>{children}</div>}
-function StatCard({label,value,icon,color=G.green600,bg=G.green50}){return <div style={{background:bg,borderRadius:14,padding:"1rem 1.25rem",display:"flex",alignItems:"center",gap:12}}>
+function StatCard({label,value,icon,color=G.purple600,bg=G.purple50}){return <div style={{background:bg,borderRadius:14,padding:"1rem 1.25rem",display:"flex",alignItems:"center",gap:12}}>
   <div style={{width:44,height:44,borderRadius:12,background:color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{icon}</div>
   <div><div className="outfit" style={{fontSize:22,fontWeight:700,color:G.gray900,lineHeight:1}}>{value}</div><div style={{fontSize:12,color:G.gray500,fontWeight:500,marginTop:3}}>{label}</div></div>
 </div>}
-function ProgressBar({value,max=100,color=G.green500}){return <div style={{height:8,background:G.gray100,borderRadius:4,overflow:"hidden"}}><div style={{height:"100%",width:`${Math.min((value/max)*100,100)}%`,background:color,borderRadius:4,transition:"width 0.6s ease"}}/></div>}
-function Avatar({name,size=36}){return <div style={{width:size,height:size,borderRadius:"50%",background:G.green800,color:G.white,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*0.36,fontWeight:700,fontFamily:"Outfit",flexShrink:0}}>{name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()}</div>}
+function ProgressBar({value,max=100,color=G.purple500}){return <div style={{height:8,background:G.gray100,borderRadius:4,overflow:"hidden"}}><div style={{height:"100%",width:`${Math.min((value/max)*100,100)}%`,background:color,borderRadius:4,transition:"width 0.6s ease"}}/></div>}
+function Avatar({name,size=36}){return <div style={{width:size,height:size,borderRadius:"50%",background:G.purple800,color:G.white,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*0.36,fontWeight:700,fontFamily:"Outfit",flexShrink:0}}>{name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()}</div>}
 
 // ─── LANDING ──────────────────────────────────────────────────────────────────
 function LandingPage({onAuth}){
@@ -79,7 +79,7 @@ function LandingPage({onAuth}){
   const submit=async()=>{if(!form.email||!form.password)return;setLoading(true);await new Promise(r=>setTimeout(r,800));setLoading(false);onAuth({name:form.name||"Student",email:form.email,country:form.country,exam:form.exam,plan:"free"})};
 
   return <div style={{minHeight:"100vh",background:G.cream}}>
-    <div style={{background:`linear-gradient(140deg,${G.green900},${G.green800} 60%,#0a3d2e)`,padding:"0 1.5rem",position:"relative",overflow:"hidden"}}>
+    <div style={{background:`linear-gradient(140deg,${G.purple900},${G.purple800} 60%,#0a3d2e)`,padding:"0 1.5rem",position:"relative",overflow:"hidden"}}>
       {[[400,-120,-100,0.08],[240,-50,-30,0.12]].map(([s,t,r,o],i)=><div key={i} style={{position:"absolute",width:s,height:s,borderRadius:"50%",border:`1px solid ${G.white}`,opacity:o,top:t,right:r}}/>)}
       <div style={{maxWidth:1100,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"1.2rem 0"}}>
         <div style={{display:"flex",alignItems:"center",gap:9}}>
@@ -105,20 +105,20 @@ function LandingPage({onAuth}){
         {/* AUTH CARD */}
         <div style={{width:"100%",maxWidth:400,background:G.white,borderRadius:22,padding:"1.75rem",boxShadow:"0 28px 64px rgba(0,0,0,0.28)",flexShrink:0}}>
           <div style={{display:"flex",background:G.gray50,borderRadius:10,padding:4,marginBottom:18}}>
-            {["signup","login"].map(m=><button key={m} onClick={()=>{setMode(m);setStep(m==="signup"?1:2)}} style={{flex:1,padding:"8px",border:"none",borderRadius:8,fontWeight:600,fontSize:13,background:mode===m?G.white:"transparent",color:mode===m?G.green700:G.gray400,cursor:"pointer",transition:"all 0.2s"}}>{m==="signup"?"Sign Up":"Log In"}</button>)}
+            {["signup","login"].map(m=><button key={m} onClick={()=>{setMode(m);setStep(m==="signup"?1:2)}} style={{flex:1,padding:"8px",border:"none",borderRadius:8,fontWeight:600,fontSize:13,background:mode===m?G.white:"transparent",color:mode===m?G.purple700:G.gray400,cursor:"pointer",transition:"all 0.2s"}}>{m==="signup"?"Sign Up":"Log In"}</button>)}
           </div>
           {mode==="signup"&&step===1&&<>
             <p style={{fontSize:13,fontWeight:600,color:G.gray700,marginBottom:12}}>🌍 Where are you studying?</p>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-              {Object.entries(COUNTRIES).map(([name,data])=><button key={name} onClick={()=>pick(name)} style={{padding:"10px 12px",border:`2px solid ${form.country===name?G.green500:G.gray100}`,borderRadius:12,background:form.country===name?G.green50:G.white,cursor:"pointer",display:"flex",alignItems:"center",gap:8,transition:"all 0.15s"}}>
-                <span style={{fontSize:20}}>{data.flag}</span><span style={{fontSize:13,fontWeight:600,color:form.country===name?G.green700:G.gray700}}>{name}</span>
+              {Object.entries(COUNTRIES).map(([name,data])=><button key={name} onClick={()=>pick(name)} style={{padding:"10px 12px",border:`2px solid ${form.country===name?G.purple500:G.gray100}`,borderRadius:12,background:form.country===name?G.purple50:G.white,cursor:"pointer",display:"flex",alignItems:"center",gap:8,transition:"all 0.15s"}}>
+                <span style={{fontSize:20}}>{data.flag}</span><span style={{fontSize:13,fontWeight:600,color:form.country===name?G.purple700:G.gray700}}>{name}</span>
               </button>)}
             </div>
           </>}
           {(mode==="login"||(mode==="signup"&&step===2))&&<>
-            {mode==="signup"&&<div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14,padding:"8px 12px",background:G.green50,borderRadius:10}}>
-              <span style={{fontSize:20}}>{c.flag}</span><span style={{fontSize:13,color:G.green700,fontWeight:600}}>{form.country}</span>
-              <button onClick={()=>setStep(1)} style={{marginLeft:"auto",fontSize:12,color:G.green600,background:"none",border:"none",cursor:"pointer",fontWeight:600}}>Change</button>
+            {mode==="signup"&&<div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14,padding:"8px 12px",background:G.purple50,borderRadius:10}}>
+              <span style={{fontSize:20}}>{c.flag}</span><span style={{fontSize:13,color:G.purple700,fontWeight:600}}>{form.country}</span>
+              <button onClick={()=>setStep(1)} style={{marginLeft:"auto",fontSize:12,color:G.purple600,background:"none",border:"none",cursor:"pointer",fontWeight:600}}>Change</button>
             </div>}
             {mode==="signup"&&<div style={{marginBottom:12}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Full Name</label><input value={form.name} onChange={e=>setForm(p=>({...p,name:e.target.value}))} placeholder="e.g. Amara Osei" style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none"}}/></div>}
             <div style={{marginBottom:12}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Email</label><input value={form.email} onChange={e=>setForm(p=>({...p,email:e.target.value}))} type="email" placeholder="you@email.com" style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none"}}/></div>
@@ -126,7 +126,7 @@ function LandingPage({onAuth}){
             {mode==="signup"&&<div style={{marginBottom:16}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Target Exam</label><select value={form.exam} onChange={e=>setForm(p=>({...p,exam:e.target.value}))} style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none",background:G.white}}>{c.exams.map(e=><option key={e}>{e}</option>)}</select></div>}
             {mode==="login"&&<div style={{marginBottom:14}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Country</label><select value={form.country} onChange={e=>setForm(p=>({...p,country:e.target.value,exam:COUNTRIES[e.target.value].exams[0]}))} style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none",background:G.white}}>{Object.keys(COUNTRIES).map(c=><option key={c}>{c}</option>)}</select></div>}
             <Btn full loading={loading} onClick={submit} style={{marginBottom:10}}>{mode==="signup"?"Create Free Account →":"Log In →"}</Btn>
-            <p style={{fontSize:12,color:G.gray400,textAlign:"center"}}>{mode==="signup"?"Have an account? ":"New here? "}<span onClick={()=>{setMode(mode==="signup"?"login":"signup");setStep(mode==="signup"?2:1)}} style={{color:G.green600,cursor:"pointer",fontWeight:600}}>{mode==="signup"?"Log In":"Sign Up Free"}</span></p>
+            <p style={{fontSize:12,color:G.gray400,textAlign:"center"}}>{mode==="signup"?"Have an account? ":"New here? "}<span onClick={()=>{setMode(mode==="signup"?"login":"signup");setStep(mode==="signup"?2:1)}} style={{color:G.purple600,cursor:"pointer",fontWeight:600}}>{mode==="signup"?"Log In":"Sign Up Free"}</span></p>
           </>}
         </div>
       </div>
@@ -143,22 +143,22 @@ function LandingPage({onAuth}){
     </div>
 
     {/* PRICING */}
-    <div style={{background:G.green900,padding:"3.5rem 1.5rem"}}>
+    <div style={{background:G.purple900,padding:"3.5rem 1.5rem"}}>
       <div style={{maxWidth:900,margin:"0 auto",textAlign:"center"}}>
         <h2 className="outfit" style={{color:G.white,fontSize:"clamp(1.5rem,3vw,2rem)",fontWeight:800,marginBottom:6,letterSpacing:"-0.5px"}}>Affordable for Every Student</h2>
         <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:"2rem",flexWrap:"wrap"}}>
-          {Object.entries(COUNTRIES).map(([n,d])=><span key={n} style={{fontSize:12,color:`${G.white}60`,padding:"3px 10px",border:`1px solid ${G.green700}`,borderRadius:20}}>{d.flag} {d.currency}{d.plans.basic}/{d.currency}{d.plans.pro}</span>)}
+          {Object.entries(COUNTRIES).map(([n,d])=><span key={n} style={{fontSize:12,color:`${G.white}60`,padding:"3px 10px",border:`1px solid ${G.purple700}`,borderRadius:20}}>{d.flag} {d.currency}{d.plans.basic}/{d.currency}{d.plans.pro}</span>)}
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:14}}>
           {[
             {name:"Free",price:"Free",period:"forever",features:["10 questions/day","Basic AI Q&A","All 5 countries","Basic progress"],v:"outline",cta:"Start Free"},
             {name:"Basic",price:"Local price",period:"/month",features:["Unlimited questions","Full AI Tutor","All past questions","Progress tracking","Study schedule"],v:"primary",cta:"Go Basic",popular:true},
             {name:"Pro",price:"Local price",period:"/month",features:["Everything in Basic","PDF textbook upload","AI exam simulator","WhatsApp support","Offline access"],v:"amber",cta:"Go Pro"},
-          ].map(p=><div key={p.name} style={{background:p.popular?G.green700:G.green800,borderRadius:16,padding:"1.5rem",border:p.popular?`2px solid ${G.amber500}`:`1px solid ${G.green700}`,position:"relative"}}>
+          ].map(p=><div key={p.name} style={{background:p.popular?G.purple700:G.purple800,borderRadius:16,padding:"1.5rem",border:p.popular?`2px solid ${G.amber500}`:`1px solid ${G.purple700}`,position:"relative"}}>
             {p.popular&&<div style={{position:"absolute",top:-12,left:"50%",transform:"translateX(-50%)",background:G.amber500,color:G.white,fontSize:11,fontWeight:700,padding:"4px 14px",borderRadius:20,whiteSpace:"nowrap"}}>MOST POPULAR</div>}
             <div className="outfit" style={{color:G.white,fontWeight:800,fontSize:18,marginBottom:4}}>{p.name}</div>
             <div style={{marginBottom:14}}><span className="outfit" style={{color:G.amber400,fontWeight:800,fontSize:22}}>{p.price}</span><span style={{color:`${G.white}50`,fontSize:12}}>{p.period}</span></div>
-            {p.features.map(f=><div key={f} style={{display:"flex",gap:8,marginBottom:8,fontSize:13,color:`${G.white}cc`}}><span style={{color:G.green400,fontWeight:700,flexShrink:0}}>✓</span>{f}</div>)}
+            {p.features.map(f=><div key={f} style={{display:"flex",gap:8,marginBottom:8,fontSize:13,color:`${G.white}cc`}}><span style={{color:G.purple400,fontWeight:700,flexShrink:0}}>✓</span>{f}</div>)}
             <Btn variant={p.v} full style={{marginTop:16}} onClick={submit}>{p.cta}</Btn>
           </div>)}
         </div>
@@ -172,8 +172,8 @@ const NAV=[{id:"dashboard",icon:"⊞",label:"Dashboard"},{id:"ai-tutor",icon:"�
 
 function Sidebar({active,onNav,user,onLogout}){
   const c=COUNTRIES[user.country]||COUNTRIES.Nigeria;
-  return <div style={{width:220,background:G.green900,display:"flex",flexDirection:"column",height:"100vh",position:"sticky",top:0,flexShrink:0}}>
-    <div style={{padding:"1.25rem 1rem 1rem",borderBottom:`1px solid ${G.green800}`}}>
+  return <div style={{width:220,background:G.purple900,display:"flex",flexDirection:"column",height:"100vh",position:"sticky",top:0,flexShrink:0}}>
+    <div style={{padding:"1.25rem 1rem 1rem",borderBottom:`1px solid ${G.purple800}`}}>
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
         <div style={{width:32,height:32,borderRadius:9,background:G.amber500,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>🎯</div>
         <span className="outfit" style={{color:G.white,fontWeight:800,fontSize:20}}>PassAI</span>
@@ -181,16 +181,16 @@ function Sidebar({active,onNav,user,onLogout}){
       <div style={{fontSize:12,color:`${G.white}60`}}>{c.flag} {user.country} · {user.exam}</div>
     </div>
     <nav style={{flex:1,padding:"0.75rem 0.5rem"}}>
-      {NAV.map(n=><button key={n.id} onClick={()=>onNav(n.id)} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:10,border:"none",background:active===n.id?G.green700:"transparent",color:active===n.id?G.white:`${G.white}60`,cursor:"pointer",marginBottom:2,transition:"all 0.15s",fontSize:14,fontWeight:active===n.id?600:400,textAlign:"left"}}>
+      {NAV.map(n=><button key={n.id} onClick={()=>onNav(n.id)} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:10,border:"none",background:active===n.id?G.purple700:"transparent",color:active===n.id?G.white:`${G.white}60`,cursor:"pointer",marginBottom:2,transition:"all 0.15s",fontSize:14,fontWeight:active===n.id?600:400,textAlign:"left"}}>
         <span style={{fontSize:16}}>{n.icon}</span>{n.label}
       </button>)}
     </nav>
-    <div style={{padding:"1rem",borderTop:`1px solid ${G.green800}`}}>
+    <div style={{padding:"1rem",borderTop:`1px solid ${G.purple800}`}}>
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
         <Avatar name={user.name} size={34}/>
         <div style={{minWidth:0}}><div style={{color:G.white,fontSize:13,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.name}</div><div style={{color:`${G.white}50`,fontSize:11}}>Free Plan</div></div>
       </div>
-      <button onClick={onLogout} style={{width:"100%",padding:"7px",border:`1px solid ${G.green800}`,borderRadius:8,background:"transparent",color:`${G.white}55`,fontSize:12,cursor:"pointer"}}>Sign Out</button>
+      <button onClick={onLogout} style={{width:"100%",padding:"7px",border:`1px solid ${G.purple800}`,borderRadius:8,background:"transparent",color:`${G.white}55`,fontSize:12,cursor:"pointer"}}>Sign Out</button>
     </div>
   </div>
 }
@@ -203,11 +203,11 @@ function Dashboard({user}){
     <div style={{marginBottom:"1.5rem",display:"flex",alignItems:"flex-start",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
       <div><h1 className="outfit" style={{fontSize:26,fontWeight:800,color:G.gray900}}>Good day, {user.name.split(" ")[0]} {c.flag}</h1>
       <p style={{color:G.gray500,fontSize:14,marginTop:4}}>{new Date().toLocaleDateString("en",{weekday:"long",month:"long",day:"numeric"})} · <strong>{user.exam}</strong></p></div>
-      <Tag color={G.green700} bg={G.green50} style={{fontSize:13,padding:"6px 14px"}}>{c.flag} {user.country}</Tag>
+      <Tag color={G.purple700} bg={G.purple50} style={{fontSize:13,padding:"6px 14px"}}>{c.flag} {user.country}</Tag>
     </div>
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:12,marginBottom:"1.5rem"}}>
       <StatCard label="Day Streak" value={`${p.streak}🔥`} icon="🔥" color={G.amber500} bg={G.amber50}/>
-      <StatCard label="Today" value={`${p.questionsToday}/10`} icon="✅" color={G.green600} bg={G.green50}/>
+      <StatCard label="Today" value={`${p.questionsToday}/10`} icon="✅" color={G.purple600} bg={G.purple50}/>
       <StatCard label="Total" value={p.totalQuestions} icon="📝" color={G.purple} bg={G.purpleBg}/>
       <StatCard label="Accuracy" value={`${p.accuracy}%`} icon="🎯" color={G.blue} bg={G.blueBg}/>
     </div>
@@ -215,14 +215,14 @@ function Dashboard({user}){
       <Card>
         <div className="outfit" style={{fontWeight:700,fontSize:15,marginBottom:16}}>Subject Performance</div>
         {Object.entries(p.subjects).map(([sub,acc])=><div key={sub} style={{marginBottom:14}}>
-          <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}><span style={{fontSize:13,color:G.gray700,fontWeight:500}}>{sub}</span><span style={{fontSize:13,fontWeight:700,color:acc>=75?G.green600:acc>=60?"#e67e22":G.danger}}>{acc}%</span></div>
-          <ProgressBar value={acc} color={acc>=75?G.green500:acc>=60?"#e67e22":G.danger}/>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}><span style={{fontSize:13,color:G.gray700,fontWeight:500}}>{sub}</span><span style={{fontSize:13,fontWeight:700,color:acc>=75?G.purple600:acc>=60?"#e67e22":G.danger}}>{acc}%</span></div>
+          <ProgressBar value={acc} color={acc>=75?G.purple500:acc>=60?"#e67e22":G.danger}/>
         </div>)}
       </Card>
       <div style={{display:"flex",flexDirection:"column",gap:12}}>
-        <Card style={{background:G.green50,border:`1px solid ${G.green100}`}}><div style={{fontSize:24,marginBottom:6}}>🏆</div><div style={{fontSize:11,color:G.green700,fontWeight:700,marginBottom:2}}>TOP SUBJECT</div><div className="outfit" style={{fontSize:20,fontWeight:800,color:G.green700}}>Physics</div><div style={{fontSize:12,color:G.green600,marginTop:2}}>81% accuracy</div></Card>
+        <Card style={{background:G.purple50,border:`1px solid ${G.purple100}`}}><div style={{fontSize:24,marginBottom:6}}>🏆</div><div style={{fontSize:11,color:G.purple700,fontWeight:700,marginBottom:2}}>TOP SUBJECT</div><div className="outfit" style={{fontSize:20,fontWeight:800,color:G.purple700}}>Physics</div><div style={{fontSize:12,color:G.purple600,marginTop:2}}>81% accuracy</div></Card>
         <Card style={{background:G.amber50,border:`1px solid ${G.amber100}`}}><div style={{fontSize:24,marginBottom:6}}>⚡</div><div style={{fontSize:11,color:G.amber500,fontWeight:700,marginBottom:2}}>FOCUS HERE</div><div className="outfit" style={{fontSize:20,fontWeight:800,color:G.amber500}}>Biology</div><div style={{fontSize:12,color:G.gray500,marginTop:2}}>65% — needs work</div></Card>
-        <Card style={{background:G.green900,border:"none"}}><div style={{fontSize:11,color:`${G.white}60`,fontWeight:700,marginBottom:4}}>EXAM READINESS</div><div className="outfit" style={{fontSize:34,fontWeight:800,color:G.white,lineHeight:1,marginBottom:8}}>72%</div><ProgressBar value={72} color={G.amber500}/><div style={{fontSize:11,color:`${G.white}50`,marginTop:6}}>Target: 80%</div></Card>
+        <Card style={{background:G.purple900,border:"none"}}><div style={{fontSize:11,color:`${G.white}60`,fontWeight:700,marginBottom:4}}>EXAM READINESS</div><div className="outfit" style={{fontSize:34,fontWeight:800,color:G.white,lineHeight:1,marginBottom:8}}>72%</div><ProgressBar value={72} color={G.amber500}/><div style={{fontSize:11,color:`${G.white}50`,marginTop:6}}>Target: 80%</div></Card>
       </div>
     </div>
     <div style={{marginTop:16}}>
@@ -280,19 +280,19 @@ RULES:
     <p style={{fontSize:13,color:G.gray500,marginTop:2}}>{c.flag} {user.country} · {user.exam} · {c.curriculum}</p></div>
     <div style={{flex:1,overflowY:"auto",display:"flex",flexDirection:"column",gap:14,minHeight:0}}>
       {messages.map((m,i)=><div key={i} style={{display:"flex",gap:10,flexDirection:m.role==="user"?"row-reverse":"row",alignItems:"flex-start"}}>
-        {m.role==="assistant"&&<div style={{width:34,height:34,borderRadius:10,background:G.green800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>🎯</div>}
+        {m.role==="assistant"&&<div style={{width:34,height:34,borderRadius:10,background:G.purple800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>🎯</div>}
         {m.role==="user"&&<Avatar name={user.name} size={34}/>}
-        <div style={{maxWidth:"78%",background:m.role==="user"?G.green700:G.white,color:m.role==="user"?G.white:G.gray900,borderRadius:m.role==="user"?"16px 16px 4px 16px":"16px 16px 16px 4px",padding:"12px 16px",fontSize:14,lineHeight:1.7,border:m.role==="assistant"?`1px solid ${G.gray100}`:"none",whiteSpace:"pre-wrap"}}>{m.content}</div>
+        <div style={{maxWidth:"78%",background:m.role==="user"?G.purple700:G.white,color:m.role==="user"?G.white:G.gray900,borderRadius:m.role==="user"?"16px 16px 4px 16px":"16px 16px 16px 4px",padding:"12px 16px",fontSize:14,lineHeight:1.7,border:m.role==="assistant"?`1px solid ${G.gray100}`:"none",whiteSpace:"pre-wrap"}}>{m.content}</div>
       </div>)}
       {loading&&<div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-        <div style={{width:34,height:34,borderRadius:10,background:G.green800,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>🎯</div>
+        <div style={{width:34,height:34,borderRadius:10,background:G.purple800,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>🎯</div>
         <div style={{background:G.white,border:`1px solid ${G.gray100}`,borderRadius:"16px 16px 16px 4px",padding:"14px 16px",display:"flex",gap:5}}>
-          {[0,1,2].map(i=><div key={i} className="pulse" style={{width:8,height:8,borderRadius:"50%",background:G.green400,animationDelay:`${i*0.2}s`}}/>)}
+          {[0,1,2].map(i=><div key={i} className="pulse" style={{width:8,height:8,borderRadius:"50%",background:G.purple400,animationDelay:`${i*0.2}s`}}/>)}
         </div>
       </div>}
       <div ref={bottomRef}/>
     </div>
-    <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>{QUICK.map(q=><button key={q} onClick={()=>send(q)} style={{fontSize:12,padding:"6px 12px",borderRadius:20,border:`1px solid ${G.green100}`,background:G.green50,color:G.green700,cursor:"pointer",fontWeight:500}}>{q}</button>)}</div>
+    <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>{QUICK.map(q=><button key={q} onClick={()=>send(q)} style={{fontSize:12,padding:"6px 12px",borderRadius:20,border:`1px solid ${G.purple100}`,background:G.purple50,color:G.purple700,cursor:"pointer",fontWeight:500}}>{q}</button>)}</div>
     <div style={{display:"flex",gap:10,background:G.white,border:`1.5px solid ${G.gray100}`,borderRadius:14,padding:"8px 8px 8px 14px"}}>
       <textarea value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}}} placeholder={`Ask anything about ${user.exam}…`} style={{flex:1,border:"none",outline:"none",resize:"none",fontSize:14,lineHeight:1.5,fontFamily:"'Plus Jakarta Sans',sans-serif",color:G.gray900,background:"transparent",minHeight:40,maxHeight:100}} rows={1}/>
       <Btn onClick={()=>send()} disabled={!input.trim()||loading} loading={loading} style={{alignSelf:"flex-end"}}>Send ↑</Btn>
@@ -328,7 +328,7 @@ function PastQuestions({user}){
     <h1 className="outfit" style={{fontSize:22,fontWeight:800,color:G.gray900,marginBottom:4}}>Past Questions 📚</h1>
     <p style={{color:G.gray500,fontSize:13,marginBottom:"1rem"}}>Verified questions across 5 countries</p>
     <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>
-      {Object.entries(COUNTRIES).map(([name,data])=><button key={name} onClick={()=>{setFilterCountry(name);setFilterExam("All");setFilterSubject("All")}} style={{padding:"7px 14px",borderRadius:20,border:`1.5px solid ${filterCountry===name?G.green400:G.gray100}`,background:filterCountry===name?G.green50:G.white,color:filterCountry===name?G.green700:G.gray500,fontSize:13,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:5}}>
+      {Object.entries(COUNTRIES).map(([name,data])=><button key={name} onClick={()=>{setFilterCountry(name);setFilterExam("All");setFilterSubject("All")}} style={{padding:"7px 14px",borderRadius:20,border:`1.5px solid ${filterCountry===name?G.purple400:G.gray100}`,background:filterCountry===name?G.purple50:G.white,color:filterCountry===name?G.purple700:G.gray500,fontSize:13,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:5}}>
         <span>{data.flag}</span>{name}
       </button>)}
     </div>
@@ -340,7 +340,7 @@ function PastQuestions({user}){
             {opts.map(o=><option key={o}>{o}</option>)}
           </select></div>
         ))}
-        <Tag color={G.green700} bg={G.green50} style={{marginLeft:"auto"}}>{filtered.length} questions</Tag>
+        <Tag color={G.purple700} bg={G.purple50} style={{marginLeft:"auto"}}>{filtered.length} questions</Tag>
       </div>
     </Card>
     {filtered.length===0&&<div style={{textAlign:"center",padding:"3rem",color:G.gray400}}><div style={{fontSize:40,marginBottom:12}}>📭</div><div style={{fontWeight:600}}>No questions match</div><div style={{fontSize:13,marginTop:4}}>Try selecting All for Exam or Subject</div></div>}
@@ -348,20 +348,20 @@ function PastQuestions({user}){
       const ua=answered[q.id];const ok=ua===q.answer;
       return <Card key={q.id} style={{marginBottom:12}}>
         <div style={{display:"flex",gap:6,marginBottom:10,flexWrap:"wrap"}}>
-          <Tag color={G.purple} bg={G.purpleBg}>{q.exam}</Tag><Tag color={G.green700} bg={G.green50}>{q.year}</Tag><Tag color={G.gray700} bg={G.gray50}>{q.subject}</Tag>
+          <Tag color={G.purple} bg={G.purpleBg}>{q.exam}</Tag><Tag color={G.purple700} bg={G.purple50}>{q.year}</Tag><Tag color={G.gray700} bg={G.gray50}>{q.subject}</Tag>
         </div>
         <p style={{fontSize:15,color:G.gray900,fontWeight:500,marginBottom:12,lineHeight:1.6}}>{q.question}</p>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
           {q.options.map((opt,i)=>{
             let bg=G.white,border=`1.5px solid ${G.gray100}`,color=G.gray900;
-            if(ua!==undefined){if(i===q.answer){bg=G.green50;border=`1.5px solid ${G.green400}`;color=G.green700}else if(i===ua&&!ok){bg=G.dangerBg;border=`1.5px solid ${G.danger}`;color=G.danger}}
+            if(ua!==undefined){if(i===q.answer){bg=G.purple50;border=`1.5px solid ${G.purple400}`;color=G.purple700}else if(i===ua&&!ok){bg=G.dangerBg;border=`1.5px solid ${G.danger}`;color=G.danger}}
             return <button key={i} onClick={()=>{if(ua===undefined)setAnswered(p=>({...p,[q.id]:i}))}} style={{padding:"10px 13px",border,borderRadius:10,background:bg,color,cursor:ua===undefined?"pointer":"default",textAlign:"left",fontSize:13,fontWeight:500,transition:"all 0.18s"}}>
               <span style={{fontWeight:700,marginRight:6,opacity:0.4}}>{String.fromCharCode(65+i)}.</span>{opt}
             </button>
           })}
         </div>
         {ua!==undefined&&<div style={{marginTop:12}}>
-          <div style={{padding:"9px 13px",borderRadius:10,background:ok?G.green50:G.dangerBg,fontSize:13,color:ok?G.green700:G.danger,fontWeight:600,marginBottom:8}}>{ok?"✅ Correct!":"❌ Incorrect — answer: "+q.options[q.answer]}</div>
+          <div style={{padding:"9px 13px",borderRadius:10,background:ok?G.purple50:G.dangerBg,fontSize:13,color:ok?G.purple700:G.danger,fontWeight:600,marginBottom:8}}>{ok?"✅ Correct!":"❌ Incorrect — answer: "+q.options[q.answer]}</div>
           {!aiExplain[q.id]&&<Btn variant="outline" size="sm" loading={loadingEx[q.id]} onClick={()=>getExplain(q)}>🤖 AI Explanation</Btn>}
           {aiExplain[q.id]&&<div style={{background:G.amber50,border:`1px solid ${G.amber100}`,borderRadius:10,padding:"12px 14px",fontSize:13,lineHeight:1.7,color:G.gray700,whiteSpace:"pre-wrap"}}>{aiExplain[q.id]}</div>}
         </div>}
@@ -415,27 +415,27 @@ function PracticeTest({user}){
       </div>
       <div style={{marginBottom:20}}>
         <label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:8}}>Difficulty</label>
-        <div style={{display:"flex",gap:8}}>{["Easy","Mixed","Hard"].map(d=><button key={d} onClick={()=>setCfg(p=>({...p,difficulty:d}))} style={{flex:1,padding:"9px",border:`1.5px solid ${cfg.difficulty===d?G.green400:G.gray100}`,borderRadius:10,background:cfg.difficulty===d?G.green50:G.white,color:cfg.difficulty===d?G.green700:G.gray400,fontWeight:600,fontSize:13,cursor:"pointer"}}>{d}</button>)}</div>
+        <div style={{display:"flex",gap:8}}>{["Easy","Mixed","Hard"].map(d=><button key={d} onClick={()=>setCfg(p=>({...p,difficulty:d}))} style={{flex:1,padding:"9px",border:`1.5px solid ${cfg.difficulty===d?G.purple400:G.gray100}`,borderRadius:10,background:cfg.difficulty===d?G.purple50:G.white,color:cfg.difficulty===d?G.purple700:G.gray400,fontWeight:600,fontSize:13,cursor:"pointer"}}>{d}</button>)}</div>
       </div>
       <Btn full loading={loading} onClick={generate}>🤖 Generate AI Test</Btn>
     </Card>
   </div>
 
   if(done) return <div className="fade-in" style={{padding:"2rem",maxWidth:640}}>
-    <Card style={{textAlign:"center",marginBottom:14,background:pct>=80?G.green50:G.amber50,border:`1px solid ${pct>=80?G.green100:G.amber100}`}}>
+    <Card style={{textAlign:"center",marginBottom:14,background:pct>=80?G.purple50:G.amber50,border:`1px solid ${pct>=80?G.purple100:G.amber100}`}}>
       <div style={{fontSize:52,marginBottom:8}}>{pct>=80?"🏆":pct>=60?"👍":"📚"}</div>
       <div className="outfit" style={{fontSize:28,fontWeight:800}}>{score}/{qs.length}</div>
-      <div className="outfit" style={{fontSize:36,fontWeight:800,color:pct>=80?G.green600:G.amber500,marginBottom:4}}>{pct}%</div>
+      <div className="outfit" style={{fontSize:36,fontWeight:800,color:pct>=80?G.purple600:G.amber500,marginBottom:4}}>{pct}%</div>
       <p style={{color:G.gray500,fontSize:13}}>{pct>=80?"Excellent! 🔥":pct>=60?"Good work! Review errors.":"Keep practising!"}</p>
       <div style={{display:"flex",gap:10,justifyContent:"center",marginTop:14}}>
         <Btn variant="outline" onClick={()=>setPhase("setup")}>New Test</Btn>
         <Btn onClick={()=>setDone(false)}>Review Answers</Btn>
       </div>
     </Card>
-    {qs.map((q,i)=><Card key={i} style={{marginBottom:10,borderLeft:`4px solid ${ans[i]===q.answer?G.green500:G.danger}`}}>
+    {qs.map((q,i)=><Card key={i} style={{marginBottom:10,borderLeft:`4px solid ${ans[i]===q.answer?G.purple500:G.danger}`}}>
       <div style={{fontSize:14,fontWeight:600,marginBottom:6}}>Q{i+1}. {q.question}</div>
-      <div style={{fontSize:13,color:ans[i]===q.answer?G.green600:G.danger,marginBottom:4}}>{ans[i]===q.answer?"✅":"❌"} {q.options[ans[i]]||"Not answered"}</div>
-      {ans[i]!==q.answer&&<div style={{fontSize:13,color:G.green600,marginBottom:4}}>✅ {q.options[q.answer]}</div>}
+      <div style={{fontSize:13,color:ans[i]===q.answer?G.purple600:G.danger,marginBottom:4}}>{ans[i]===q.answer?"✅":"❌"} {q.options[ans[i]]||"Not answered"}</div>
+      {ans[i]!==q.answer&&<div style={{fontSize:13,color:G.purple600,marginBottom:4}}>✅ {q.options[q.answer]}</div>}
       <div style={{fontSize:12,color:G.gray500,background:G.gray50,padding:"8px 10px",borderRadius:8}}>{q.explanation}</div>
     </Card>)}
   </div>
@@ -450,7 +450,7 @@ function PracticeTest({user}){
     <Card style={{marginTop:14,marginBottom:14}}>
       <p style={{fontSize:15,fontWeight:600,lineHeight:1.7,marginBottom:16}}>{q.question}</p>
       <div style={{display:"flex",flexDirection:"column",gap:8}}>
-        {q.options.map((opt,i)=><button key={i} onClick={()=>{setAns(p=>({...p,[cur]:i}));if(cur<qs.length-1)setTimeout(()=>setCur(c=>c+1),350);else setDone(true)}} style={{padding:"11px 15px",border:`1.5px solid ${ans[cur]===i?G.green400:G.gray100}`,borderRadius:10,background:ans[cur]===i?G.green50:G.white,color:ans[cur]===i?G.green700:G.gray900,cursor:"pointer",textAlign:"left",fontSize:14,fontWeight:500,transition:"all 0.15s"}}>
+        {q.options.map((opt,i)=><button key={i} onClick={()=>{setAns(p=>({...p,[cur]:i}));if(cur<qs.length-1)setTimeout(()=>setCur(c=>c+1),350);else setDone(true)}} style={{padding:"11px 15px",border:`1.5px solid ${ans[cur]===i?G.purple400:G.gray100}`,borderRadius:10,background:ans[cur]===i?G.purple50:G.white,color:ans[cur]===i?G.purple700:G.gray900,cursor:"pointer",textAlign:"left",fontSize:14,fontWeight:500,transition:"all 0.15s"}}>
           <span style={{fontWeight:700,marginRight:8,color:G.gray300}}>{String.fromCharCode(65+i)}.</span>{opt}
         </button>)}
       </div>
@@ -498,16 +498,16 @@ function StudySchedule({user}){
         <Btn full loading={loading} onClick={generate}>🤖 Generate Schedule</Btn>
       </Card>
       {schedule&&<div className="fade-in">
-        <Card style={{marginBottom:12,background:G.green50,border:`1px solid ${G.green100}`}}><div className="outfit" style={{fontWeight:700,marginBottom:6,color:G.green800}}>📋 Strategy</div><p style={{fontSize:14,color:G.green700,lineHeight:1.7}}>{schedule.overview}</p></Card>
+        <Card style={{marginBottom:12,background:G.purple50,border:`1px solid ${G.purple100}`}}><div className="outfit" style={{fontWeight:700,marginBottom:6,color:G.purple800}}>📋 Strategy</div><p style={{fontSize:14,color:G.purple700,lineHeight:1.7}}>{schedule.overview}</p></Card>
         {schedule.phases?.map((ph,i)=><Card key={i} style={{marginBottom:10}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
-            <div style={{width:28,height:28,borderRadius:8,background:G.green800,color:G.white,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13,flexShrink:0}}>{i+1}</div>
+            <div style={{width:28,height:28,borderRadius:8,background:G.purple800,color:G.white,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13,flexShrink:0}}>{i+1}</div>
             <div><div className="outfit" style={{fontWeight:700,fontSize:15}}>{ph.name}</div><div style={{fontSize:12,color:G.gray500}}>{ph.duration} · {ph.focus}</div></div>
           </div>
           {ph.daily?.map((item,j)=><div key={j} style={{display:"flex",gap:10,padding:"7px 0",borderBottom:j<ph.daily.length-1?`1px solid ${G.gray50}`:"none",alignItems:"center"}}>
             <span style={{fontSize:11,color:G.gray400,width:55,flexShrink:0}}>{item.time}</span>
             <span style={{fontSize:13,flex:1}}>{item.task}</span>
-            <Tag color={G.green700} bg={G.green50}>{item.duration}</Tag>
+            <Tag color={G.purple700} bg={G.purple50}>{item.duration}</Tag>
           </div>)}
         </Card>)}
         {schedule.tips&&<Card style={{background:G.amber50,border:`1px solid ${G.amber100}`}}>
@@ -527,7 +527,7 @@ function Progress({user}){
     <p style={{color:G.gray500,fontSize:13,marginBottom:"1.25rem"}}>{c.flag} {user.country} · {user.exam}</p>
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:12,marginBottom:"1.25rem"}}>
       <StatCard label="Day Streak" value={`${p.streak}🔥`} icon="🔥" color={G.amber500} bg={G.amber50}/>
-      <StatCard label="Questions" value={p.totalQuestions} icon="📝" color={G.green600} bg={G.green50}/>
+      <StatCard label="Questions" value={p.totalQuestions} icon="📝" color={G.purple600} bg={G.purple50}/>
       <StatCard label="Accuracy" value={`${p.accuracy}%`} icon="🎯" color={G.blue} bg={G.blueBg}/>
       <StatCard label="Readiness" value="72%" icon="🏆" color={G.purple} bg={G.purpleBg}/>
     </div>
@@ -535,14 +535,14 @@ function Progress({user}){
       <Card>
         <div className="outfit" style={{fontWeight:700,fontSize:15,marginBottom:16}}>Subject Performance</div>
         {Object.entries(p.subjects).map(([sub,acc])=><div key={sub} style={{marginBottom:14}}>
-          <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}><span style={{fontSize:13,color:G.gray700,fontWeight:500}}>{sub}</span><div style={{display:"flex",gap:6,alignItems:"center"}}><span style={{fontSize:13,fontWeight:700,color:acc>=75?G.green600:acc>=60?"#e67e22":G.danger}}>{acc}%</span><Tag color={acc>=75?G.green700:acc>=60?"#9c6500":G.danger} bg={acc>=75?G.green50:acc>=60?G.amber50:G.dangerBg}>{acc>=75?"Strong":acc>=60?"Good":"Weak"}</Tag></div></div>
-          <ProgressBar value={acc} color={acc>=75?G.green500:acc>=60?"#e67e22":G.danger}/>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}><span style={{fontSize:13,color:G.gray700,fontWeight:500}}>{sub}</span><div style={{display:"flex",gap:6,alignItems:"center"}}><span style={{fontSize:13,fontWeight:700,color:acc>=75?G.purple600:acc>=60?"#e67e22":G.danger}}>{acc}%</span><Tag color={acc>=75?G.purple700:acc>=60?"#9c6500":G.danger} bg={acc>=75?G.purple50:acc>=60?G.amber50:G.dangerBg}>{acc>=75?"Strong":acc>=60?"Good":"Weak"}</Tag></div></div>
+          <ProgressBar value={acc} color={acc>=75?G.purple500:acc>=60?"#e67e22":G.danger}/>
         </div>)}
       </Card>
       <div style={{display:"flex",flexDirection:"column",gap:12}}>
-        <Card style={{background:G.green900,border:"none"}}><div style={{fontSize:11,color:`${G.white}60`,fontWeight:700,letterSpacing:"0.06em",marginBottom:6}}>EXAM READINESS</div><div className="outfit" style={{fontSize:38,fontWeight:800,color:G.white,lineHeight:1,marginBottom:8}}>72%</div><ProgressBar value={72} color={G.amber500}/><div style={{fontSize:11,color:`${G.white}50`,marginTop:6}}>Need 80% to be exam-ready</div></Card>
+        <Card style={{background:G.purple900,border:"none"}}><div style={{fontSize:11,color:`${G.white}60`,fontWeight:700,letterSpacing:"0.06em",marginBottom:6}}>EXAM READINESS</div><div className="outfit" style={{fontSize:38,fontWeight:800,color:G.white,lineHeight:1,marginBottom:8}}>72%</div><ProgressBar value={72} color={G.amber500}/><div style={{fontSize:11,color:`${G.white}50`,marginTop:6}}>Need 80% to be exam-ready</div></Card>
         <Card><div className="outfit" style={{fontWeight:700,fontSize:14,marginBottom:10}}>📅 Weekly Activity</div>
-          <div style={{display:"flex",gap:5,alignItems:"flex-end",height:52}}>{[20,38,28,50,60,42,58].map((h,i)=><div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}><div style={{width:"100%",background:i===6?G.green500:G.green100,borderRadius:3,height:h}}/><span style={{fontSize:10,color:G.gray400}}>{"SMTWTFS"[i]}</span></div>)}</div>
+          <div style={{display:"flex",gap:5,alignItems:"flex-end",height:52}}>{[20,38,28,50,60,42,58].map((h,i)=><div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}><div style={{width:"100%",background:i===6?G.purple500:G.purple100,borderRadius:3,height:h}}/><span style={{fontSize:10,color:G.gray400}}>{"SMTWTFS"[i]}</span></div>)}</div>
         </Card>
         <Card style={{background:G.amber50,border:`1px solid ${G.amber100}`}}><div className="outfit" style={{fontWeight:700,fontSize:13,marginBottom:8}}>📌 Study Focus</div>{c.subjects.slice(0,3).map(s=><div key={s} style={{display:"flex",gap:8,marginBottom:6,fontSize:13,color:G.gray700}}><span style={{color:G.amber500}}>→</span>{s}</div>)}</Card>
       </div>
