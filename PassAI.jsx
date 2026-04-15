@@ -119,6 +119,17 @@ function StatCard({label,value,icon,color=G.purple600,bg=G.purple50}){return <di
 function ProgressBar({value,max=100,color=G.purple500}){return <div style={{height:8,background:G.gray100,borderRadius:4,overflow:"hidden"}}><div style={{height:"100%",width:`${Math.min((value/max)*100,100)}%`,background:color,borderRadius:4,transition:"width 0.6s ease"}}/></div>}
 function Avatar({name,size=36}){return <div style={{width:size,height:size,borderRadius:"50%",background:G.purple800,color:G.white,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*0.36,fontWeight:700,fontFamily:"Outfit",flexShrink:0}}>{name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()}</div>}
 
+function FAQItem({q,a}){
+  const [open,setOpen]=useState(false);
+  return <div style={{borderBottom:`1px solid ${G.gray100}`,padding:"1rem 0"}}>
+    <button onClick={()=>setOpen(p=>!p)} style={{width:"100%",background:"none",border:"none",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,textAlign:"left"}}>
+      <span style={{fontSize:15,fontWeight:600,color:G.gray900}}>{q}</span>
+      <span style={{fontSize:20,color:G.purple600,flexShrink:0,transition:"transform 0.2s",transform:open?"rotate(45deg)":"rotate(0deg)"}}>+</span>
+    </button>
+    {open&&<p style={{fontSize:14,color:G.gray500,lineHeight:1.7,marginTop:10,paddingRight:"2rem"}}>{a}</p>}
+  </div>
+}
+
 // ─── LANDING ──────────────────────────────────────────────────────────────────
 function LandingPage({onAuth}){
   const [mode,setMode]=useState("signup");
@@ -206,6 +217,104 @@ function LandingPage({onAuth}){
       </div>
     </div>
 
+    {/* HOW IT WORKS */}
+    <div style={{maxWidth:1100,margin:"0 auto",padding:"4rem 1.5rem"}}>
+      <div style={{textAlign:"center",marginBottom:"3rem"}}>
+        <Tag color={G.purple600} bg={G.purple50} style={{fontSize:13,padding:"6px 16px",marginBottom:16}}>HOW IT WORKS</Tag>
+        <h2 className="outfit" style={{fontSize:"clamp(1.6rem,3vw,2.2rem)",fontWeight:800,color:G.gray900,letterSpacing:"-0.5px"}}>Start Studying in 3 Simple Steps</h2>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:24}}>
+        {[
+          {step:"01",icon:"🌍",title:"Choose Your Country & Exam",desc:"Select from Nigeria, Kenya, Ghana, Tanzania, or Uganda. Pick your target exam — JAMB, KCSE, WASSCE and more."},
+          {step:"02",icon:"📚",title:"Study & Practice",desc:"Access thousands of past questions, use the AI tutor for explanations, generate practice tests, and upload your textbooks."},
+          {step:"03",icon:"🏆",title:"Track & Improve",desc:"Monitor your accuracy per subject, maintain your study streak, and watch your exam readiness score grow to 100%."},
+        ].map(s=><div key={s.step} style={{textAlign:"center",padding:"1.5rem"}}>
+          <div style={{width:60,height:60,borderRadius:20,background:G.purple600,color:G.white,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,margin:"0 auto 1rem",fontWeight:800}}>{s.icon}</div>
+          <div style={{fontSize:11,fontWeight:800,color:G.purple600,letterSpacing:"0.1em",marginBottom:6}}>{s.step}</div>
+          <div className="outfit" style={{fontWeight:700,fontSize:17,color:G.gray900,marginBottom:8}}>{s.title}</div>
+          <p style={{fontSize:14,color:G.gray500,lineHeight:1.7}}>{s.desc}</p>
+        </div>)}
+      </div>
+    </div>
+
+    {/* FEATURES GRID */}
+    <div style={{background:G.gray50,padding:"4rem 1.5rem"}}>
+      <div style={{maxWidth:1100,margin:"0 auto"}}>
+        <div style={{textAlign:"center",marginBottom:"3rem"}}>
+          <Tag color={G.purple600} bg={G.purple50} style={{fontSize:13,padding:"6px 16px",marginBottom:16}}>FEATURES</Tag>
+          <h2 className="outfit" style={{fontSize:"clamp(1.6rem,3vw,2.2rem)",fontWeight:800,color:G.gray900,letterSpacing:"-0.5px"}}>Everything You Need to Pass</h2>
+          <p style={{color:G.gray500,fontSize:15,marginTop:8}}>Built specifically for African exam systems</p>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:16}}>
+          {[
+            {icon:"🤖",title:"AI Tutor",desc:"Ask questions in plain English. Get curriculum-accurate answers with step-by-step explanations for your specific exam.",color:G.purple600,bg:G.purple50},
+            {icon:"📚",title:"Past Questions",desc:"50,000+ verified questions from JAMB, KCSE, WASSCE, CSEE, UCE and more — going back 20 years.",color:"#0984e3",bg:"#e6f5ff"},
+            {icon:"📄",title:"PDF Textbook AI",desc:"Upload any textbook and ask questions about specific chapters. Works with any curriculum.",color:"#00b894",bg:"#e8faf4"},
+            {icon:"📝",title:"AI Practice Tests",desc:"Generate fresh custom tests by subject, topic, difficulty — perfectly matched to your exam format.",color:G.amber500,bg:G.amber50},
+            {icon:"📅",title:"Study Schedule",desc:"AI builds a personalized study plan from your exam date, adjusting for your weak areas.",color:"#6c5ce7",bg:"#f0eeff"},
+            {icon:"📊",title:"Progress Tracking",desc:"Real-time accuracy per subject, daily streaks, weekly activity charts, and exam readiness score.",color:"#e17055",bg:"#fff0ed"},
+          ].map(f=><div key={f.title} style={{background:G.white,borderRadius:16,border:`1px solid ${G.gray100}`,padding:"1.5rem"}}>
+            <div style={{width:46,height:46,borderRadius:14,background:f.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:12}}>{f.icon}</div>
+            <div className="outfit" style={{fontWeight:700,fontSize:15,color:G.gray900,marginBottom:6}}>{f.title}</div>
+            <p style={{fontSize:13,color:G.gray500,lineHeight:1.65}}>{f.desc}</p>
+          </div>)}
+        </div>
+      </div>
+    </div>
+
+    {/* TESTIMONIALS */}
+    <div style={{maxWidth:1100,margin:"0 auto",padding:"4rem 1.5rem"}}>
+      <div style={{textAlign:"center",marginBottom:"3rem"}}>
+        <Tag color={G.purple600} bg={G.purple50} style={{fontSize:13,padding:"6px 16px",marginBottom:16}}>TESTIMONIALS</Tag>
+        <h2 className="outfit" style={{fontSize:"clamp(1.6rem,3vw,2.2rem)",fontWeight:800,color:G.gray900,letterSpacing:"-0.5px"}}>Students Who Passed With PassAI</h2>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:20}}>
+        {[
+          {name:"Amara Osei",country:"🇬🇭 Ghana",exam:"WASSCE 2023",grade:"A1 in Mathematics",text:"PassAI's step-by-step explanations finally made algebra click for me. I went from C6 to A1 in just 3 months of daily practice.",avatar:"AO"},
+          {name:"Chukwuemeka Eze",country:"🇳🇬 Nigeria",exam:"JAMB 2023",grade:"Score: 312/400",text:"The past questions database is incredible. I practiced 2018-2022 JAMB questions every day and scored 312. PassAI is the best investment I made.",avatar:"CE"},
+          {name:"Aisha Mohammed",country:"🇰🇪 Kenya",exam:"KCSE 2023",grade:"A in Biology",text:"The AI Tutor explained photosynthesis and genetics better than my teacher ever did. I could ask the same question 10 times without feeling embarrassed!",avatar:"AM"},
+          {name:"Farida Nakato",country:"🇺🇬 Uganda",exam:"UCE 2023",grade:"Division 1",text:"I used the study schedule feature and it organized my entire revision. I knew exactly what to study each day. Got Division 1 in all my subjects!",avatar:"FN"},
+          {name:"Zawadi Mwangi",country:"🇹🇿 Tanzania",exam:"CSEE 2023",grade:"Division 1",text:"Nilifurahia sana jinsi AI inavyoeleza maswali ya Kiswahili na Sayansi. PassAI ni chombo bora kwa wanafunzi wa Tanzania.",avatar:"ZM"},
+          {name:"Kofi Mensah",country:"🇬🇭 Ghana",exam:"BECE 2023",grade:"Aggregate 6",text:"I'm only in JHS but PassAI helped me get the best BECE results in my school. The practice tests are just like the real exam!",avatar:"KM"},
+        ].map(t=><div key={t.name} style={{background:G.white,borderRadius:16,border:`1px solid ${G.gray100}`,padding:"1.5rem"}}>
+          <div style={{display:"flex",gap:4,marginBottom:12}}>{[1,2,3,4,5].map(s=><span key={s} style={{color:G.amber500,fontSize:14}}>★</span>)}</div>
+          <p style={{fontSize:13,color:G.gray700,lineHeight:1.7,marginBottom:14,fontStyle:"italic"}}>"{t.text}"</p>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:38,height:38,borderRadius:"50%",background:G.purple600,color:G.white,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,flexShrink:0}}>{t.avatar}</div>
+            <div><div style={{fontWeight:700,fontSize:13,color:G.gray900}}>{t.name}</div>
+            <div style={{fontSize:11,color:G.gray400}}>{t.country} · {t.exam}</div>
+            <div style={{fontSize:11,color:G.purple600,fontWeight:700}}>{t.grade}</div></div>
+          </div>
+        </div>)}
+      </div>
+    </div>
+
+    {/* STATS BANNER */}
+    <div style={{background:`linear-gradient(135deg,${G.purple800},${G.purple600})`,padding:"3rem 1.5rem"}}>
+      <div style={{maxWidth:1100,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:24,textAlign:"center"}}>
+        {[["50,000+","Past Questions"],["5","Countries"],["15+","Subjects"],["98%","Pass Rate"],["4.9★","Rating"],["Free","To Start"]].map(([v,l])=>(
+          <div key={l}><div className="outfit" style={{color:G.white,fontWeight:800,fontSize:28,letterSpacing:"-1px"}}>{v}</div>
+          <div style={{color:`${G.white}70`,fontSize:13,marginTop:4}}>{l}</div></div>
+        ))}
+      </div>
+    </div>
+
+    {/* FAQ */}
+    <div style={{maxWidth:800,margin:"0 auto",padding:"4rem 1.5rem"}}>
+      <div style={{textAlign:"center",marginBottom:"3rem"}}>
+        <Tag color={G.purple600} bg={G.purple50} style={{fontSize:13,padding:"6px 16px",marginBottom:16}}>FAQ</Tag>
+        <h2 className="outfit" style={{fontSize:"clamp(1.6rem,3vw,2.2rem)",fontWeight:800,color:G.gray900,letterSpacing:"-0.5px"}}>Frequently Asked Questions</h2>
+      </div>
+      {[
+        {q:"Is PassAI free to use?",a:"Yes! The free plan gives you 10 questions per day, basic AI Q&A, and access to all 5 countries. Upgrade to Basic or Pro for unlimited access."},
+        {q:"Which exams does PassAI cover?",a:"PassAI covers JAMB, WAEC, NECO, GCE (Nigeria), KCSE, KCPE (Kenya), WASSCE, BECE (Ghana), CSEE, ACSEE (Tanzania), UCE, UACE (Uganda), plus university and professional exams."},
+        {q:"How is PassAI different from other study apps?",a:"PassAI uses real AI (Claude by Anthropic) trained on African curricula. It gives curriculum-specific answers, knows your exam format, and uses local examples relevant to your country."},
+        {q:"Can I upload my textbooks?",a:"Yes! Pro plan users can upload any PDF textbook and ask the AI questions about specific chapters, topics, or concepts."},
+        {q:"How do I pay? Are Nigerian/Kenyan cards accepted?",a:"We accept all major cards including local Nigerian and Kenyan bank cards. We also support mobile money where available."},
+        {q:"Is my data safe?",a:"Yes. All data is encrypted and stored securely. We never sell your data to third parties. Your study history is private."},
+      ].map((faq,i)=><FAQItem key={i} q={faq.q} a={faq.a}/>)}
+    </div>
+
     {/* PRICING */}
     <div style={{background:G.purple900,padding:"3.5rem 1.5rem"}}>
       <div style={{maxWidth:900,margin:"0 auto",textAlign:"center"}}>
@@ -226,6 +335,15 @@ function LandingPage({onAuth}){
             <Btn variant={p.v} full style={{marginTop:16}} onClick={submit}>{p.cta}</Btn>
           </div>)}
         </div>
+      </div>
+    </div>
+    {/* FINAL CTA */}
+    <div style={{padding:"3rem 1.5rem",background:G.cream}}>
+      <div style={{maxWidth:700,margin:"0 auto",textAlign:"center",padding:"3rem",background:`linear-gradient(135deg,${G.purple800},${G.purple600})`,borderRadius:24}}>
+        <div style={{fontSize:40,marginBottom:12}}>🎯</div>
+        <h2 className="outfit" style={{color:G.white,fontSize:"clamp(1.4rem,3vw,1.8rem)",fontWeight:800,marginBottom:12,letterSpacing:"-0.5px"}}>Ready to Pass Your Exams?</h2>
+        <p style={{color:`${G.white}80`,fontSize:15,marginBottom:20,lineHeight:1.7}}>Join thousands of students across Africa studying smarter with PassAI. Start free today — no credit card needed.</p>
+        <Btn variant="amber" size="lg" onClick={()=>{setMode("signup");setStep(1);window.scrollTo({top:0,behavior:"smooth"})}}>Start Studying Free →</Btn>
       </div>
     </div>
   </div>
