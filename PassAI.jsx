@@ -26,63 +26,42 @@ const css = `
   @media(max-width:768px){.hide-mobile{display:none!important}.mobile-stack{flex-direction:column!important}.mobile-col{grid-template-columns:1fr!important}}
 `;
 
-const LEVELS = ["Secondary School", "University / College", "Professional"];
 
 const COUNTRIES = {
   Nigeria:{
     flag:"🇳🇬",currency:"₦",plans:{basic:4000,pro:8000},
-    exams:{
-      "Secondary School":["JAMB","WAEC","NECO","GCE"],
-      "University / College":["Post-UTME","University Exams","HND/OND","JUPEB","IJMB"],
-      "Professional":["ICAN","ACCA","CIPM","NIM","WAEC-Tech"],
-    },
-    subjects:["Mathematics","English Language","Physics","Chemistry","Biology","Economics","Government","Literature","Geography","CRS/IRS","Commerce","Agricultural Science","Accounting","Further Mathematics","Statistics"],
-    curriculum:"NERDC (Nigerian) curriculum",
-    tip:"JAMB is CBT-based, 40 questions per subject. Post-UTME varies by university. ICAN is Nigeria's top accounting certification.",
+    exams:["JAMB","WAEC","NECO","GCE"],
+    subjects:["Mathematics","English Language","Physics","Chemistry","Biology","Economics","Government","Literature","Geography","CRS/IRS","Commerce","Agricultural Science","Further Mathematics"],
+    curriculum:"NERDC Nigerian Secondary School curriculum",
+    tip:"JAMB is CBT-based, 40 questions per subject in 2 hours. WAEC has objectives and essays/practicals. Aim for 250+ in JAMB.",
   },
   Ghana:{
     flag:"🇬🇭",currency:"GH₵",plans:{basic:60,pro:120},
-    exams:{
-      "Secondary School":["WASSCE","BECE","NOVDEC"],
-      "University / College":["SSSCE","University Exams","HND","Mature Students"],
-      "Professional":["ICAG","CIMG","CIHRM","ICA Ghana"],
-    },
-    subjects:["Core Mathematics","English Language","Integrated Science","Social Studies","Physics","Chemistry","Biology","Economics","Business Management","Geography","History","French","Accounting","Elective Mathematics"],
-    curriculum:"Ghana Education Service (GES) curriculum",
-    tip:"WASSCE aggregate 6 or better in 6 subjects needed for university. ICAG is Ghana's top accounting body.",
+    exams:["WASSCE","BECE","NOVDEC"],
+    subjects:["Core Mathematics","English Language","Integrated Science","Social Studies","Physics","Chemistry","Biology","Economics","Business Management","Geography","History","Elective Mathematics"],
+    curriculum:"Ghana Education Service (GES) Secondary curriculum",
+    tip:"WASSCE: need at least C6 in 6 core and elective subjects for university admission. BECE is for JHS students.",
   },
   Tanzania:{
     flag:"🇹🇿",currency:"TSh",plans:{basic:12000,pro:24000},
-    exams:{
-      "Secondary School":["CSEE","ACSEE","PSLE"],
-      "University / College":["University Exams","Diploma","NACTE"],
-      "Professional":["NBAA","CPA Tanzania","ACCA"],
-    },
-    subjects:["Mathematics","English","Kiswahili","Physics","Chemistry","Biology","History","Geography","Civics","Commerce","Book Keeping","Agriculture","Advanced Mathematics","Economics"],
-    curriculum:"NECTA (Tanzania) curriculum",
-    tip:"CSEE Division I is highest. ACSEE is A-Level. NBAA is Tanzania's top accounting certification.",
+    exams:["CSEE","ACSEE","PSLE"],
+    subjects:["Mathematics","English","Kiswahili","Physics","Chemistry","Biology","History","Geography","Civics","Commerce","Book Keeping","Agriculture","Advanced Mathematics"],
+    curriculum:"NECTA Tanzania Secondary School curriculum",
+    tip:"CSEE (Form 4) Division I means 7 points or less — lowest points = best grade. ACSEE is Form 6 A-Level.",
   },
   Uganda:{
     flag:"🇺🇬",currency:"USh",plans:{basic:18000,pro:36000},
-    exams:{
-      "Secondary School":["UCE","UACE","PLE"],
-      "University / College":["University Exams","Diploma","UBTEB"],
-      "Professional":["ICPAU","CPA Uganda","ACCA","PMI"],
-    },
-    subjects:["Mathematics","English Language","Physics","Chemistry","Biology","History","Geography","Economics","Entrepreneurship","Agriculture","Computer Studies","Fine Art","Luganda","Subsidiary Mathematics"],
-    curriculum:"Uganda NCDC/UNEB curriculum",
-    tip:"UCE aggregate 4–36, Division 1 is best. ICPAU is Uganda's top accounting body.",
+    exams:["UCE","UACE","PLE"],
+    subjects:["Mathematics","English Language","Physics","Chemistry","Biology","History","Geography","Economics","Entrepreneurship","Agriculture","Computer Studies","Fine Art","Luganda"],
+    curriculum:"Uganda NCDC/UNEB Secondary School curriculum",
+    tip:"UCE aggregate 4–36, Division 1 is the best. UACE (A-Level) requires principal and subsidiary passes. English is compulsory.",
   },
   Kenya:{
     flag:"🇰🇪",currency:"KSh",plans:{basic:500,pro:1000},
-    exams:{
-      "Secondary School":["KCSE","KCPE","KPSEA"],
-      "University / College":["University Exams","KUCCPS","Diploma","KNEC Craft"],
-      "Professional":["CPA Kenya","ACCA","CIFA","ICM Kenya"],
-    },
-    subjects:["Mathematics","English","Kiswahili","Physics","Chemistry","Biology","History & Government","Geography","CRE/IRE","Business Studies","Agriculture","Computer Studies","French","Aviation","Drawing & Design"],
-    curriculum:"KICD (Kenya) curriculum",
-    tip:"KCSE grade C+ minimum for public university. CPA Kenya is the top accounting certification. KUCCPS manages university placement.",
+    exams:["KCSE","KCPE","KPSEA"],
+    subjects:["Mathematics","English","Kiswahili","Physics","Chemistry","Biology","History & Government","Geography","CRE/IRE","Business Studies","Agriculture","Computer Studies","French"],
+    curriculum:"KICD Kenya Secondary School curriculum",
+    tip:"KCSE: Grade A to E. Mean grade C+ is minimum for public university. Mathematics and English are compulsory subjects.",
   },
 };
 
@@ -425,68 +404,235 @@ function Dashboard({user}){
 // ─── AI TUTOR ─────────────────────────────────────────────────────────────────
 function AITutor({user}){
   const c=COUNTRIES[user.country]||COUNTRIES.Nigeria;
-  const [messages,setMessages]=useState([{role:"assistant",content:`Hello! I'm your PassAI tutor ${c.flag}\n\nI specialise in ${user.exam} preparation using the ${c.curriculum}.\n\nAsk me anything — step-by-step solutions, topic explanations, exam tips, or practice questions. What shall we study?`}]);
+  const [mode,setMode]=useState("chat"); // "chat" | "lesson"
+  const [messages,setMessages]=useState([{role:"assistant",content:"👋 Hey! I'm your PassAI teacher.\n\nI can help you in two ways:\n📖 **Lesson Mode** — I pick a topic and teach it step by step\n💬 **Chat Mode** — Ask me anything and I'll explain it\n\nWhat subject do you want to start with?",suggestions:["Teach me Mathematics","Teach me Physics","Teach me Chemistry","Teach me Biology"]}]);
   const [input,setInput]=useState("");
   const [loading,setLoading]=useState(false);
+  const [lessonTopic,setLessonTopic]=useState(null);
+  const [lessonStep,setLessonStep]=useState(0);
+  const [voiceEnabled,setVoiceEnabled]=useState(true);
+  const [listening,setListening]=useState(false);
+  const [speaking,setSpeaking]=useState(false);
   const bottomRef=useRef();
+  const recognitionRef=useRef(null);
   useEffect(()=>{bottomRef.current?.scrollIntoView({behavior:"smooth"})},[messages]);
 
-  const send=async(text=input)=>{
-    if(!text.trim()||loading)return;
-    const um={role:"user",content:text};
-    setMessages(p=>[...p,um]);setInput("");setLoading(true);
-    try{
-      const history=[...messages,um].map(m=>({role:m.role,content:m.content}));
-      const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1200,
-          system:`You are PassAI — an expert AI study tutor for African secondary school students.
+  const LESSON_STEPS=["📖 Introduction","🔍 Deep Explanation","✏️ Worked Example","🧠 Common Mistakes","📝 Practice Question"];
+
+  const formatMessage=(text)=>{
+    // Split by lines and render with basic formatting
+    return text.split("\n").map((line,i)=>{
+      if(line.startsWith("**")&&line.endsWith("**")) return <div key={i} style={{fontWeight:700,color:G.gray900,marginTop:8,marginBottom:2}}>{line.slice(2,-2)}</div>;
+      if(line.startsWith("# ")) return <div key={i} className="outfit" style={{fontWeight:800,fontSize:17,color:G.gray900,marginTop:10,marginBottom:4}}>{line.slice(2)}</div>;
+      if(line.startsWith("## ")) return <div key={i} className="outfit" style={{fontWeight:700,fontSize:15,color:G.purple700||"#5a0fa8",marginTop:8,marginBottom:3}}>{line.slice(3)}</div>;
+      if(line.startsWith("• ")||line.startsWith("- ")) return <div key={i} style={{display:"flex",gap:8,marginTop:3}}><span style={{color:G.amber500,fontWeight:700,flexShrink:0}}>•</span><span>{line.slice(2)}</span></div>;
+      if(line.match(/^\d+\./)) return <div key={i} style={{display:"flex",gap:8,marginTop:4}}><span style={{color:G.purple600||"#7c3aed",fontWeight:700,minWidth:20,flexShrink:0}}>{line.split(".")[0]}.</span><span>{line.split(".").slice(1).join(".").trim()}</span></div>;
+      if(line.startsWith("✅")||line.startsWith("❌")||line.startsWith("⚡")||line.startsWith("💡")||line.startsWith("📌")||line.startsWith("🎯")) return <div key={i} style={{marginTop:5,padding:"6px 10px",background:G.amber50,borderRadius:8,fontSize:13}}>{line}</div>;
+      if(line.trim()==="") return <div key={i} style={{height:6}}/>;
+      return <div key={i} style={{marginTop:2,lineHeight:1.75}}>{line}</div>;
+    });
+  };
+
+  const buildSystem=(isLesson,topic,step)=>`You are PassAI — an expert African exam teacher. You are warm, encouraging, and brilliant at making complex topics simple.
 
 STUDENT: ${user.country} ${c.flag} | Exam: ${user.exam} | Curriculum: ${c.curriculum}
-SUBJECTS: ${c.subjects.join(", ")}
-EXAM CONTEXT: ${c.tip}
 
-RULES:
-1. Align all answers to ${c.curriculum} and ${user.exam} format
-2. Use local ${user.country} examples where helpful (currency: ${c.currency})
-3. Show complete step-by-step working for maths/science
-4. End with "Exam Tip:" when helpful
-5. Be encouraging and supportive — many students lack good teachers
-6. If student writes in Swahili (Tanzania/Kenya/Uganda), respond in both languages`,
-          messages:history.slice(-20)
+${isLesson?`LESSON MODE — You are teaching: "${topic}"
+Current step ${step+1} of 5: ${LESSON_STEPS[step]}
+
+For this step:
+${step===0?"Give a short exciting introduction to the topic. Why does it matter? Where is it used in real life in "+user.country+"? 3-4 sentences max. End with: what we'll cover today.":""}
+${step===1?"Give a thorough but clear explanation. Use numbered steps. Include the key formula or rule. Use a simple analogy relevant to "+user.country+".":""}
+${step===2?"Show one complete worked example step-by-step. Number every step. Show all working. This must be exam-style for "+user.exam+".":""}
+${step===3?"List 3 common mistakes students make on this topic in "+user.exam+". For each: show the WRONG approach then the RIGHT approach.":""}
+${step===4?"Give one exam-style practice question. After a blank line write 'ANSWER:' and give the full solution. Then give an Exam Tip.":""}
+
+Format your response clearly with headers (## for sections), numbered steps, and bullet points. Be concise but complete.`
+:`CHAT MODE — Answer the student question directly.
+Rules:
+1. Use ## headers to organize long answers
+2. Number every step in calculations  
+3. Use • bullet points for lists
+4. Always end with 💡 Exam Tip: one sentence
+5. Use local ${user.country} examples (currency ${c.currency}, local places, familiar context)
+6. For wrong answers always show WHY it's wrong`};
+
+  const send=async(text=input,isLesson=false,topic=null,step=0)=>{
+    if(!text.trim()||loading)return;
+    const userMsg={role:"user",content:text};
+    setMessages(p=>[...p,userMsg]);
+    setInput("");setLoading(true);
+    try{
+      const history=[...messages,userMsg].filter(m=>!m.suggestions).map(m=>({role:m.role,content:m.content}));
+      const res=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          model:"claude-sonnet-4-20250514",max_tokens:1500,
+          system:buildSystem(isLesson,topic||lessonTopic,step),
+          messages:history.slice(-16)
         })
       });
       const d=await res.json();
-      setMessages(p=>[...p,{role:"assistant",content:d.content?.[0]?.text||"Sorry, try again."}]);
-    }catch{setMessages(p=>[...p,{role:"assistant",content:"⚠️ Connection error. Please try again."}]);}
+      const reply=d.content?.[0]?.text||"Sorry, try again.";
+      const nextStep=isLesson?step+1:null;
+      const suggestions=isLesson&&nextStep<5
+        ?[LESSON_STEPS[nextStep]+" →"]
+        :isLesson&&nextStep>=5
+        ?["Practice more questions","Teach me another topic","Quiz me on this topic"]
+        :["Show me an example","Explain differently","Give me a harder question","Quiz me"];
+      const newMsg={role:"assistant",content:reply,suggestions,isLesson,step:isLesson?step:null};
+      setMessages(p=>[...p,newMsg]);
+      if(isLesson)setLessonStep(nextStep);
+      if(voiceEnabled)speak(reply);
+    }catch{
+      setMessages(p=>[...p,{role:"assistant",content:"⚠️ Connection error. Please try again.",suggestions:[]}]);
+    }
     setLoading(false);
   };
 
-  const QUICK=c.subjects.slice(0,4).map(s=>`Explain a ${user.exam} ${s} topic`);
+  const speak=(text)=>{
+    if(!window.speechSynthesis)return;
+    window.speechSynthesis.cancel();
+    const clean=text.replace(/[#*•→]/g,"").replace(/
++/g," ").trim();
+    const utt=new SpeechSynthesisUtterance(clean);
+    utt.rate=0.92;utt.pitch=1.05;utt.volume=1;
+    const voices=window.speechSynthesis.getVoices();
+    const preferred=voices.find(v=>v.name.includes("Google UK English Female")||v.name.includes("Samantha")||v.name.includes("Karen")||v.name.includes("Moira")||(v.lang==="en-GB"&&v.localService));
+    if(preferred)utt.voice=preferred;
+    window.speechSynthesis.speak(utt);
+  };
 
-  return <div className="fade-in" style={{padding:"2rem",height:"100%",display:"flex",flexDirection:"column",gap:14}}>
-    <div><h1 className="outfit" style={{fontSize:22,fontWeight:800,color:G.gray900}}>AI Tutor 🤖</h1>
-    <p style={{fontSize:13,color:G.gray500,marginTop:2}}>{c.flag} {user.country} · {user.exam} · {c.curriculum}</p></div>
-    <div style={{flex:1,overflowY:"auto",display:"flex",flexDirection:"column",gap:14,minHeight:0}}>
+  const stopSpeaking=()=>{window.speechSynthesis?.cancel();setSpeaking(false);};
+
+  const startListening=()=>{
+    if(!("webkitSpeechRecognition" in window||"SpeechRecognition" in window)){
+      alert("Voice not supported in this browser. Please use Chrome.");return;
+    }
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    const rec=new SR();
+    rec.lang=user.country==="Tanzania"||user.country==="Kenya"?"sw-KE":"en-NG";
+    rec.interimResults=false;rec.maxAlternatives=1;
+    rec.onstart=()=>setListening(true);
+    rec.onend=()=>setListening(false);
+    rec.onerror=()=>setListening(false);
+    rec.onresult=(e)=>{
+      const transcript=e.results[0][0].transcript;
+      setInput(transcript);
+      setTimeout(()=>send(transcript),300);
+    };
+    recognitionRef.current=rec;
+    rec.start();
+  };
+
+  const startLesson=(subject)=>{
+    const topic=`${user.exam} ${subject} — Core Concepts`;
+    setLessonTopic(topic);
+    setLessonStep(0);
+    setMode("lesson");
+    send(`Start teaching me: ${topic}`,true,topic,0);
+  };
+
+  const handleSuggestion=(s,msg)=>{
+    if(s.includes("→")&&msg.isLesson){
+      send(`Continue to: ${s.replace(" →","")}`,true,lessonTopic,msg.step+1);
+    }else if(s.startsWith("Teach me ")){
+      startLesson(s.replace("Teach me ",""));
+    }else{
+      send(s,false);
+    }
+  };
+
+  const SUBJECTS=c.subjects.slice(0,6);
+
+  return <div className="fade-in" style={{height:"100%",display:"flex",flexDirection:"column",background:"#fafafa"}}>
+    {/* Header */}
+    <div style={{padding:"1rem 1.5rem",borderBottom:`1px solid ${G.gray100}`,background:G.white,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,flexShrink:0}}>
+      <div style={{display:"flex",alignItems:"center",gap:10}}>
+        <div style={{width:40,height:40,borderRadius:12,background:`linear-gradient(135deg,${G.purple800||"#3b0764"},${G.purple600||"#7c3aed"})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>🎓</div>
+        <div>
+          <div className="outfit" style={{fontWeight:800,fontSize:16,color:G.gray900}}>AI Teacher</div>
+          <div style={{fontSize:11,color:G.gray500}}>{c.flag} {user.country} · {user.exam} · {mode==="lesson"&&lessonTopic?lessonTopic:"Chat Mode"}</div>
+        </div>
+      </div>
+      <div style={{display:"flex",gap:6,alignItems:"center"}}>
+        <button onClick={()=>{voiceEnabled?stopSpeaking():null;setVoiceEnabled(p=>!p)}} title={voiceEnabled?"Mute AI voice":"Unmute AI voice"} style={{width:32,height:32,borderRadius:"50%",border:`1.5px solid ${voiceEnabled?G.green400:G.gray100}`,background:voiceEnabled?G.green50:G.white,cursor:"pointer",fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>{voiceEnabled?"🔊":"🔇"}</button>
+        {["chat","lesson"].map(m=><button key={m} onClick={()=>setMode(m)} style={{padding:"6px 14px",borderRadius:20,border:`1.5px solid ${mode===m?"#7c3aed":G.gray100}`,background:mode===m?"#f5f3ff":G.white,color:mode===m?"#6d28d9":G.gray500,fontSize:12,fontWeight:700,cursor:"pointer"}}>{m==="chat"?"💬 Chat":"📖 Lesson"}</button>)}
+      </div>
+    </div>
+
+    {/* Messages */}
+    <div style={{flex:1,overflowY:"auto",padding:"1.25rem",display:"flex",flexDirection:"column",gap:14,minHeight:0}}>
+
+      {/* Lesson progress bar */}
+      {mode==="lesson"&&lessonTopic&&<div style={{background:G.white,border:`1px solid ${G.gray100}`,borderRadius:12,padding:"10px 14px"}}>
+        <div style={{fontSize:11,fontWeight:700,color:G.gray500,marginBottom:8,letterSpacing:"0.04em"}}>LESSON PROGRESS</div>
+        <div style={{display:"flex",gap:4}}>
+          {LESSON_STEPS.map((s,i)=><div key={i} style={{flex:1,textAlign:"center"}}>
+            <div style={{height:4,borderRadius:4,background:i<lessonStep?(G.purple600||"#7c3aed"):i===lessonStep?G.amber500:G.gray100,marginBottom:4,transition:"background 0.3s"}}/>
+            <div style={{fontSize:9,color:i<lessonStep?(G.purple600||"#7c3aed"):G.gray400,fontWeight:i===lessonStep?700:400}}>{s.split(" ")[0]}</div>
+          </div>)}
+        </div>
+      </div>}
+
+      {/* Chat mode subject picker */}
+      {mode==="lesson"&&!lessonTopic&&<div style={{background:G.white,border:`1px solid ${G.gray100}`,borderRadius:16,padding:"1.25rem"}}>
+        <div className="outfit" style={{fontWeight:700,fontSize:14,marginBottom:12,color:G.gray900}}>📖 Choose a subject to start your lesson:</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+          {SUBJECTS.map(s=><button key={s} onClick={()=>startLesson(s)} style={{padding:"10px 12px",border:`1.5px solid ${G.gray100}`,borderRadius:10,background:G.white,color:G.gray700,cursor:"pointer",textAlign:"left",fontSize:13,fontWeight:600,transition:"all 0.15s",display:"flex",alignItems:"center",gap:8}}>
+            <span style={{fontSize:18}}>{s==="Mathematics"?"🔢":s==="Physics"?"⚡":s==="Chemistry"?"🧪":s==="Biology"?"🧬":s==="English"||s==="English Language"?"📝":"📚"}</span>{s}
+          </button>)}
+        </div>
+      </div>}
+
       {messages.map((m,i)=><div key={i} style={{display:"flex",gap:10,flexDirection:m.role==="user"?"row-reverse":"row",alignItems:"flex-start"}}>
-        {m.role==="assistant"&&<div style={{width:34,height:34,borderRadius:10,background:G.purple800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>🎯</div>}
-        {m.role==="user"&&<Avatar name={user.name} size={34}/>}
-        <div style={{maxWidth:"78%",background:m.role==="user"?G.purple700:G.white,color:m.role==="user"?G.white:G.gray900,borderRadius:m.role==="user"?"16px 16px 4px 16px":"16px 16px 16px 4px",padding:"12px 16px",fontSize:14,lineHeight:1.7,border:m.role==="assistant"?`1px solid ${G.gray100}`:"none",whiteSpace:"pre-wrap"}}>{m.content}</div>
+        {m.role==="assistant"&&<div style={{width:36,height:36,borderRadius:12,background:`linear-gradient(135deg,${G.purple800||"#3b0764"},${G.purple600||"#7c3aed"})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:18}}>🎓</div>}
+        {m.role==="user"&&<Avatar name={user.name} size={36}/>}
+        <div style={{maxWidth:"82%",display:"flex",flexDirection:"column",gap:8,alignItems:m.role==="user"?"flex-end":"flex-start"}}>
+          <div style={{background:m.role==="user"?`linear-gradient(135deg,${G.purple700||"#5b21b6"},${G.purple600||"#7c3aed"})`:G.white,color:m.role==="user"?G.white:G.gray900,borderRadius:m.role==="user"?"18px 18px 4px 18px":"18px 18px 18px 4px",padding:"12px 16px",fontSize:14,lineHeight:1.7,border:m.role==="assistant"?`1px solid ${G.gray100}`:"none",boxShadow:m.role==="assistant"?"0 1px 4px rgba(0,0,0,0.06)":"none"}}>
+            {m.role==="assistant"?formatMessage(m.content):m.content}
+          </div>
+          {/* Lesson step badge */}
+          {m.isLesson&&m.step!=null&&<div style={{fontSize:10,color:G.gray400,fontWeight:600}}>{LESSON_STEPS[m.step]}</div>}
+          {/* Suggestion chips */}
+          {m.suggestions&&m.suggestions.length>0&&<div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+            {m.suggestions.map((s,si)=><button key={si} onClick={()=>handleSuggestion(s,m)} style={{padding:"6px 12px",borderRadius:20,border:`1.5px solid ${G.purple200||"#ddd6fe"}`,background:G.purple50||"#f5f3ff",color:G.purple700||"#6d28d9",fontSize:12,fontWeight:600,cursor:"pointer",transition:"all 0.15s"}}>{s}</button>)}
+          </div>}
+        </div>
       </div>)}
+
       {loading&&<div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-        <div style={{width:34,height:34,borderRadius:10,background:G.purple800,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>🎯</div>
-        <div style={{background:G.white,border:`1px solid ${G.gray100}`,borderRadius:"16px 16px 16px 4px",padding:"14px 16px",display:"flex",gap:5}}>
-          {[0,1,2].map(i=><div key={i} className="pulse" style={{width:8,height:8,borderRadius:"50%",background:G.purple400,animationDelay:`${i*0.2}s`}}/>)}
+        <div style={{width:36,height:36,borderRadius:12,background:`linear-gradient(135deg,${G.purple800||"#3b0764"},${G.purple600||"#7c3aed"})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>🎓</div>
+        <div style={{background:G.white,border:`1px solid ${G.gray100}`,borderRadius:"18px 18px 18px 4px",padding:"14px 18px",display:"flex",gap:6,alignItems:"center",boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
+          <span style={{fontSize:12,color:G.gray500,fontWeight:500}}>Teacher is thinking</span>
+          {[0,1,2].map(i=><div key={i} className="pulse" style={{width:6,height:6,borderRadius:"50%",background:G.purple400||"#a78bfa",animationDelay:`${i*0.18}s`}}/>)}
         </div>
       </div>}
       <div ref={bottomRef}/>
     </div>
-    <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>{QUICK.map(q=><button key={q} onClick={()=>send(q)} style={{fontSize:12,padding:"6px 12px",borderRadius:20,border:`1px solid ${G.purple100}`,background:G.purple50,color:G.purple700,cursor:"pointer",fontWeight:500}}>{q}</button>)}</div>
-    <div style={{display:"flex",gap:10,background:G.white,border:`1.5px solid ${G.gray100}`,borderRadius:14,padding:"8px 8px 8px 14px"}}>
-      <textarea value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}}} placeholder={`Ask anything about ${user.exam}…`} style={{flex:1,border:"none",outline:"none",resize:"none",fontSize:14,lineHeight:1.5,fontFamily:"'Plus Jakarta Sans',sans-serif",color:G.gray900,background:"transparent",minHeight:40,maxHeight:100}} rows={1}/>
-      <Btn onClick={()=>send()} disabled={!input.trim()||loading} loading={loading} style={{alignSelf:"flex-end"}}>Send ↑</Btn>
+
+    {/* Input area */}
+    <div style={{padding:"0.875rem 1.25rem",borderTop:`1px solid ${G.gray100}`,background:G.white,flexShrink:0}}>
+      {/* Listening indicator */}
+      {listening&&<div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 14px",background:"#fff0f0",borderRadius:10,marginBottom:4}}>
+        <div style={{width:10,height:10,borderRadius:"50%",background:"#e74c3c",animation:"pulse 0.8s ease infinite"}}/>
+        <span style={{fontSize:13,color:"#e74c3c",fontWeight:600}}>Listening... speak now</span>
+        <button onClick={()=>recognitionRef.current?.stop()} style={{marginLeft:"auto",fontSize:12,color:"#e74c3c",background:"none",border:"none",cursor:"pointer",fontWeight:700}}>Stop</button>
+      </div>}
+      <div style={{display:"flex",gap:8,background:"#f5f4f0",border:`1.5px solid ${G.gray100}`,borderRadius:14,padding:"6px 6px 6px 14px"}}>
+        <textarea value={input} onChange={e=>setInput(e.target.value)}
+          onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}}}
+          placeholder={listening?"Listening...":mode==="lesson"?"Ask about the lesson… or tap 🎤 to speak":`Ask anything about ${user.exam}… or tap 🎤`}
+          style={{flex:1,border:"none",outline:"none",resize:"none",fontSize:14,lineHeight:1.5,color:G.gray900,background:"transparent",minHeight:36,maxHeight:100,fontFamily:"'Plus Jakarta Sans',sans-serif"}} rows={1}/>
+        <div style={{display:"flex",gap:6,alignSelf:"flex-end"}}>
+          <button onClick={startListening} disabled={listening||loading} title="Speak your question" style={{width:36,height:36,borderRadius:10,border:`1.5px solid ${listening?"#e74c3c":G.gray100}`,background:listening?"#fff0f0":G.white,cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center",opacity:listening?1:0.8}}>{listening?"⏹":"🎤"}</button>
+          <Btn onClick={()=>send()} disabled={!input.trim()||loading} loading={loading} style={{borderRadius:10}}>Send ↑</Btn>
+        </div>
+      </div>
     </div>
   </div>
 }
+
 
 // ─── PAST QUESTIONS ───────────────────────────────────────────────────────────
 const API="https://passai-production-7757.up.railway.app";
@@ -555,7 +701,7 @@ function PastQuestions({user}){
     </div>
     <Card style={{marginBottom:12,padding:"0.875rem"}}>
       <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"flex-end"}}>
-        {[["Exam",["All",...Object.values(c.exams).flat()],filterExam,setFilterExam],["Subject",["All",...c.subjects.slice(0,8)],filterSubject,setFilterSubject]].map(([label,opts,val,set])=>(
+        {[["Exam",["All",...c.exams],filterExam,setFilterExam],["Subject",["All",...c.subjects.slice(0,8)],filterSubject,setFilterSubject]].map(([label,opts,val,set])=>(
           <div key={label}><label style={{fontSize:11,fontWeight:700,color:G.gray400,display:"block",marginBottom:4}}>{label}</label>
           <select value={val} onChange={e=>set(e.target.value)} style={{padding:"7px 12px",border:`1.5px solid ${G.gray100}`,borderRadius:8,fontSize:13,outline:"none",background:G.white}}>
             {opts.map(o=><option key={o}>{o}</option>)}
@@ -603,7 +749,7 @@ function PastQuestions({user}){
 // ─── PRACTICE TEST ────────────────────────────────────────────────────────────
 function PracticeTest({user}){
   const c=COUNTRIES[user.country]||COUNTRIES.Nigeria;
-  const currentExams=Object.values(c.exams).flat();
+  const currentExams=c.exams;
   const [cfg,setCfg]=useState({subject:c.subjects[0],exam:user.exam,count:5,difficulty:"Mixed"});
   const [phase,setPhase]=useState("setup");
   const [qs,setQs]=useState([]);
@@ -698,7 +844,7 @@ function PracticeTest({user}){
 // ─── STUDY SCHEDULE ───────────────────────────────────────────────────────────
 function StudySchedule({user}){
   const c=COUNTRIES[user.country]||COUNTRIES.Nigeria;
-  const allExams=Object.values(c.exams).flat();
+  const allExams=c.exams;
   const [form,setForm]=useState({exam:user.exam,date:"",hours:3,weak:[]});
   const [schedule,setSchedule]=useState(null);
   const [loading,setLoading]=useState(false);
