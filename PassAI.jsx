@@ -483,16 +483,41 @@ RULES:
 }
 
 // ─── PAST QUESTIONS ───────────────────────────────────────────────────────────
+const API="https://passai-production-7757.up.railway.app";
+
 function PastQuestions({user}){
-  const [filterCountry,setFilterCountry]=useState(user.country);
+  const [filterCountry,setFilterCountry]=useState(user.country||"Nigeria");
   const [filterExam,setFilterExam]=useState("All");
   const [filterSubject,setFilterSubject]=useState("All");
   const [answered,setAnswered]=useState({});
   const [aiExplain,setAiExplain]=useState({});
   const [loadingEx,setLoadingEx]=useState({});
-  const c=COUNTRIES[filterCountry];
+  const [questions,setQuestions]=useState([]);
+  const [total,setTotal]=useState(0);
+  const [loading,setLoading]=useState(false);
+  const [offset,setOffset]=useState(0);
+  const LIMIT=20;
+  const c=COUNTRIES[filterCountry]||COUNTRIES.Nigeria;
 
-  const filtered=SAMPLE_QS.filter(q=>q.country===filterCountry&&(filterExam==="All"||q.exam===filterExam)&&(filterSubject==="All"||q.subject===filterSubject));
+  const fetchQuestions=async(country,exam,subject,off=0)=>{
+    setLoading(true);
+    try{
+      const params=new URLSearchParams({country,limit:LIMIT,offset:off});
+      if(exam&&exam!=="All")params.append("exam",exam);
+      if(subject&&subject!=="All")params.append("subject",subject);
+      const res=await fetch(`${API}/questions?${params}`,{headers:{Authorization:`Bearer ${user.token}`}});
+      const d=await res.json();
+      if(off===0)setQuestions(d.questions||[]);
+      else setQuestions(p=>[...p,...(d.questions||[])]);
+      setTotal(d.total||0);
+      setOffset(off);
+    }catch(e){console.error(e)}
+    setLoading(false);
+  };
+
+  useEffect(()=>{fetchQuestions(filterCountry,filterExam,filterSubject,0);},[filterCountry,filterExam,filterSubject]);
+
+  const filtered=questions;
 
   const getExplain=async(q)=>{
     setLoadingEx(p=>({...p,[q.id]:true}));
@@ -525,30 +550,39 @@ function PastQuestions({user}){
         <Tag color={G.purple700} bg={G.purple50} style={{marginLeft:"auto"}}>{filtered.length} questions</Tag>
       </div>
     </Card>
-    {filtered.length===0&&<div style={{textAlign:"center",padding:"3rem",color:G.gray400}}><div style={{fontSize:40,marginBottom:12}}>📭</div><div style={{fontWeight:600}}>No questions match</div><div style={{fontSize:13,marginTop:4}}>Try selecting All for Exam or Subject</div></div>}
+    {loading&&questions.length===0&&<div style={{textAlign:"center",padding:"3rem",color:G.gray400}}><Spinner size={32}/><div style={{marginTop:12,fontWeight:600}}>Loading questions...</div></div>}
+    {!loading&&filtered.length===0&&<div style={{textAlign:"center",padding:"3rem",color:G.gray400}}><div style={{fontSize:40,marginBottom:12}}>📭</div><div style={{fontWeight:600}}>No questions found</div><div style={{fontSize:13,marginTop:4}}>Try selecting All for Exam or Subject</div></div>}
     {filtered.map(q=>{
-      const ua=answered[q.id];const ok=ua===q.answer;
+      const opts=typeof q.options==="string"?JSON.parse(q.options):q.options;
+      const correctIdx=q.correct_index??q.answer??0;
+      const ua=answered[q.id];const ok=ua===correctIdx;
       return <Card key={q.id} style={{marginBottom:12}}>
         <div style={{display:"flex",gap:6,marginBottom:10,flexWrap:"wrap"}}>
           <Tag color={G.purple} bg={G.purpleBg}>{q.exam}</Tag><Tag color={G.purple700} bg={G.purple50}>{q.year}</Tag><Tag color={G.gray700} bg={G.gray50}>{q.subject}</Tag>
+          {q.difficulty&&<Tag color={q.difficulty==="easy"?"#27ae60":q.difficulty==="hard"?"#e74c3c":"#f39c12"} bg={q.difficulty==="easy"?"#eafaf1":q.difficulty==="hard"?"#fdedec":"#fef9e7"}>{q.difficulty}</Tag>}
         </div>
         <p style={{fontSize:15,color:G.gray900,fontWeight:500,marginBottom:12,lineHeight:1.6}}>{q.question}</p>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-          {q.options.map((opt,i)=>{
+          {opts.map((opt,i)=>{
             let bg=G.white,border=`1.5px solid ${G.gray100}`,color=G.gray900;
-            if(ua!==undefined){if(i===q.answer){bg=G.purple50;border=`1.5px solid ${G.purple400}`;color=G.purple700}else if(i===ua&&!ok){bg=G.dangerBg;border=`1.5px solid ${G.danger}`;color=G.danger}}
+            if(ua!==undefined){if(i===correctIdx){bg=G.purple50;border=`1.5px solid ${G.purple400}`;color=G.purple700}else if(i===ua&&!ok){bg=G.dangerBg;border=`1.5px solid ${G.danger}`;color=G.danger}}
             return <button key={i} onClick={()=>{if(ua===undefined)setAnswered(p=>({...p,[q.id]:i}))}} style={{padding:"10px 13px",border,borderRadius:10,background:bg,color,cursor:ua===undefined?"pointer":"default",textAlign:"left",fontSize:13,fontWeight:500,transition:"all 0.18s"}}>
               <span style={{fontWeight:700,marginRight:6,opacity:0.4}}>{String.fromCharCode(65+i)}.</span>{opt}
             </button>
           })}
         </div>
         {ua!==undefined&&<div style={{marginTop:12}}>
-          <div style={{padding:"9px 13px",borderRadius:10,background:ok?G.purple50:G.dangerBg,fontSize:13,color:ok?G.purple700:G.danger,fontWeight:600,marginBottom:8}}>{ok?"✅ Correct!":"❌ Incorrect — answer: "+q.options[q.answer]}</div>
+          <div style={{padding:"9px 13px",borderRadius:10,background:ok?G.purple50:G.dangerBg,fontSize:13,color:ok?G.purple700:G.danger,fontWeight:600,marginBottom:8}}>{ok?"✅ Correct!":"❌ Incorrect — answer: "+opts[correctIdx]}</div>
+          {q.explanation&&<div style={{background:G.amber50,border:`1px solid ${G.amber100}`,borderRadius:10,padding:"10px 13px",fontSize:13,lineHeight:1.7,color:G.gray700,marginBottom:8}}>{q.explanation}</div>}
           {!aiExplain[q.id]&&<Btn variant="outline" size="sm" loading={loadingEx[q.id]} onClick={()=>getExplain(q)}>🤖 AI Explanation</Btn>}
           {aiExplain[q.id]&&<div style={{background:G.amber50,border:`1px solid ${G.amber100}`,borderRadius:10,padding:"12px 14px",fontSize:13,lineHeight:1.7,color:G.gray700,whiteSpace:"pre-wrap"}}>{aiExplain[q.id]}</div>}
         </div>}
       </Card>
     })}
+    {questions.length<total&&<div style={{textAlign:"center",marginTop:8}}>
+      <Btn variant="outline" loading={loading} onClick={()=>fetchQuestions(filterCountry,filterExam,filterSubject,offset+LIMIT)}>Load More Questions</Btn>
+      <div style={{fontSize:12,color:G.gray400,marginTop:6}}>Showing {questions.length} of {total}</div>
+    </div>}
   </div>
 }
 

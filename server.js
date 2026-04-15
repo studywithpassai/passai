@@ -305,9 +305,10 @@ Return ONLY valid JSON:
 // ═════════════════════════════════════════════════════════════════════════════
 
 app.get("/questions", requireAuth, async (req, res) => {
-  const { exam, subject, year, limit = 20, offset = 0 } = req.query;
+  const { exam, subject, year, country, limit = 20, offset = 0 } = req.query;
 
   let query = supabase.from("past_questions").select("*", { count: "exact" });
+  if (country && country !== "All") query = query.eq("country", country);
   if (exam && exam !== "All") query = query.eq("exam", exam);
   if (subject && subject !== "All") query = query.eq("subject", subject);
   if (year && year !== "All") query = query.eq("year", parseInt(year));
