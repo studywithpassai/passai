@@ -177,14 +177,10 @@ function LandingPage({onAuth}){
             {mode==="signup"&&<div style={{marginBottom:12}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Full Name</label><input value={form.name} onChange={e=>setForm(p=>({...p,name:e.target.value}))} placeholder="e.g. Amara Osei" style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none"}}/></div>}
             <div style={{marginBottom:12}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Email</label><input value={form.email} onChange={e=>setForm(p=>({...p,email:e.target.value}))} type="email" placeholder="you@email.com" style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none"}}/></div>
             <div style={{marginBottom:14}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Password</label><input value={form.password} onChange={e=>setForm(p=>({...p,password:e.target.value}))} type="password" placeholder="••••••••" style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none"}}/></div>
-            {mode==="signup"&&<div style={{marginBottom:12}}>
-              <label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Study Level</label>
-              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                
-            </div>}
+
             {mode==="signup"&&<div style={{marginBottom:16}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Target Exam</label><select value={form.exam} onChange={e=>setForm(p=>({...p,exam:e.target.value}))} style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none",background:G.white}}>{currentExams.map(e=><option key={e}>{e}</option>)}</select></div>}
-            {mode==="login"&&<div style={{marginBottom:14}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Country</label><select value={form.country} onChange={e=>setForm(p=>({...p,country:e.target.value,exam:COUNTRIES[e.target.value].exams["Secondary School"][0]}))} style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none",background:G.white}}>{Object.keys(COUNTRIES).map(c=><option key={c}>{c}</option>)}</select></div>}
-<Btn full loading={loading} onClick={submit} style={{marginBottom:10}}>{mode==="signup"?"Create Free Account →":"Log In →"}</Btn>
+            {mode==="login"&&<div style={{marginBottom:14}}><label style={{fontSize:12,fontWeight:600,color:G.gray700,display:"block",marginBottom:5}}>Country</label><select value={form.country} onChange={e=>setForm(p=>({...p,country:e.target.value,exam:COUNTRIES[e.target.value].exams[0]}))} style={{width:"100%",padding:"10px 13px",border:`1.5px solid ${G.gray100}`,borderRadius:10,fontSize:14,outline:"none",background:G.white}}>{Object.keys(COUNTRIES).map(c=><option key={c}>{c}</option>)}</select></div>}
+            <Btn full loading={loading} onClick={submit} style={{marginBottom:10}}>{mode==="signup"?"Create Free Account →":"Log In →"}</Btn>
             <p style={{fontSize:12,color:G.gray400,textAlign:"center"}}>{mode==="signup"?"Have an account? ":"New here? "}<span onClick={()=>{setMode(mode==="signup"?"login":"signup");setStep(mode==="signup"?2:1)}} style={{color:G.purple600,cursor:"pointer",fontWeight:600}}>{mode==="signup"?"Log In":"Sign Up Free"}</span></p>
           </>}
         </div>
@@ -196,7 +192,7 @@ function LandingPage({onAuth}){
       <div style={{maxWidth:1100,margin:"0 auto",display:"flex",gap:24,alignItems:"center",flexWrap:"wrap",justifyContent:"center"}}>
         <span style={{fontSize:11,fontWeight:700,color:G.gray400,letterSpacing:"0.06em",whiteSpace:"nowrap"}}>SUPPORTED EXAMS</span>
         {Object.entries(COUNTRIES).map(([country,data])=><div key={country} style={{display:"flex",alignItems:"center",gap:8}}>
-          <span style={{fontSize:17}}>{data.flag}</span>{Object.values(data.exams).flat().slice(0,3).map(e=><Tag key={e} style={{marginRight:4}}>{e}</Tag>)}
+          <span style={{fontSize:17}}>{data.flag}</span>{data.exams.slice(0,3).map(e=><Tag key={e} style={{marginRight:4}}>{e}</Tag>)}
         </div>)}
       </div>
     </div>
